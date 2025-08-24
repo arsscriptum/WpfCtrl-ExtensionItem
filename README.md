@@ -135,3 +135,30 @@ Launches a test dialog window containing a single `ExtensionItem` control and a 
 . .\Show-TestDialog.ps1
 Show-ExtensionItemDialog
 ```
+
+## Registering Scripts Dependenvies
+
+We are all a little bit lazy, and so when we ride the fine line between having clean, separated scripts by types and be able to include all the scripts quickly...
+We use a command that will source all the scripts in one go, without merging the scripts in one ugly file. [like this](img/deps2.png)
+```powershell 
+ᶜᵒʳᵉ⁷C:\Dev\WpfCtrl-ExtensionItem>.\scripts\Register-Dependencies.ps1 
+
+  ✔️ successfully sourced       Get-ExtensionControlDllPath.ps1
+  ✔️ successfully sourced       Get-WpfExtensionCtrl.ps1
+  ✔️ successfully sourced       Register-Control.ps1
+  ✔️ successfully sourced       Show-TestDialog.ps1
+```
+
+If there's a error in one of the script, you will get a notification [like this](img/error_details.png)
+
+```powershell
+ᶜᵒʳᵉ⁷C:\Dev\WpfCtrl-ExtensionItem> .\scripts\Register-Dependencies.ps1
+  ✔️ successfully sourced       Get-ExtensionControlDllPath.ps1
+  ❌ Found Error                        Get-WpfExtensionCtrl.ps1
+  ✔️ successfully sourced       Register-Control.ps1
+  ✔️ successfully sourced       Show-TestDialog.ps1
+  ```
+
+The ```ErrorDetails``` argument can be used to go through all the errors and list the stack and details...:
+
+![deps](img/deps.gif)
