@@ -7,28 +7,46 @@ function Get-ExtensionControlDllPath {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Position = 0, Mandatory = $false, HelpMessage = "targets")]
-        [ValidateSet("Debug", "Release")]
-        [string]$Target = "Release"
+        [ValidateSet("Debug", "Release", "Any")]
+        [string]$Target = "Any"
 
     )
 
-    $RootPath = (Resolve-Path "$PSScriptRoot\..").Path
-    [string]$DllPath = "{0}\src\bin\{1}\net6.0-windows\WebExtensionPack.Controls.dll" -f $RootPath, $Target
-    if(Test-Path $DllPath){
-        return $DllPath
-    }else{
-        [string]$BinaryPath = "{0}\src\bin\{1}" -f $RootPath, $Target
-        [string]$AllBinaryPath = "{0}\src\bin" -f $RootPath
-        $AllTargetedDlls = Get-ChildItem -Path "$BinaryPath" -Filter "*.dll" -File -Recurse | Select -ExpandProperty Fullname
-        $AllDlls = Get-ChildItem -Path "$BinaryPath" -Filter "*.dll" -File -Recurse | Select -ExpandProperty Fullname
-        $DllTargetedFound = $AllTargetedDlls -match "WebExtensionPack.Controls"
-        $DllFound = $AllDlls -match "WebExtensionPack.Controls"
-        if($DllTargetedFound){
-            return $DllTargetedFound
-        }elseif($DllFound){
+    $LibBasename = "WebExtensionPack.Controls"
+    $LibName = "{0}.dll" -f $LibBasename
+    $RootPath = (Resolve-Path "$PsScriptRoot\..").Path
+    [string]$BinaryRootPath = "{0}\src\bin" -f $RootPath
+    [string]$DebugBinaryPath = Join-Path "$BinaryRootPath" "Debug"
+    [string]$ReleaseBinaryPath = Join-Path "$BinaryRootPath" "Release"
+
+
+    if ($Target -eq 'Any') {
+        Write-Verbose "[Get-ExtensionControlDllPath] Any Targets -> Searching in `"$BinaryRootPath`""
+        [string[]]$AllDlls = Get-ChildItem -Path "$BinaryRootPath" -Filter "*.dll" -File -Recurse | Select -ExpandProperty Fullname | sort
+        $DllFound = $AllDlls.Where({ $_.EndsWith("$LibName") }) | Select -First 1
+        if ($DllFound) {
+            Write-Verbose "Found `"$DllFound`""
             return $DllFound
         }
+    } else {
+        [string]$DllPath = "{0}\{1}\net6.0-windows\{2}" -f $BinaryRootPath, $Target, $LibName
+        Write-Verbose "[Get-ExtensionControlDllPath] Target $Target -> trying direct path `"$DllPath`""
+        if (Test-Path $DllPath) {
+            Write-Verbose "Found `"$DllPath`""
+            return $DllPath
+        } else {
+            [string]$TargetBinaryPath = Join-Path "$BinaryRootPath" "$Target"
+            Write-Verbose "[Get-ExtensionControlDllPath] Target $Target -> Searching all Dlls in `"$TargetBinaryPath`""
+            [string[]]$AllTargetedDlls = Get-ChildItem -Path "$TargetBinaryPath" -Filter "*.dll" -File -Recurse | Select -ExpandProperty Fullname | sort
+            $DllTargetedFound = $AllTargetedDlls.Where({ $_.EndsWith("$Pattern") }) | Select -First 1
+            if ($DllTargetedFound) {
+                Write-Verbose "[Get-ExtensionControlDllPath] Found `"$DllTargetedFound`""
+                return $DllTargetedFound
+            }
+            write-verbose "[Get-ExtensionControlDllPath] not found...."
+        }
     }
+
     return $Null
 
 }
@@ -38,25 +56,44 @@ function Register-ExtensionControlDll {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Position = 0, Mandatory = $false, HelpMessage = "targets")]
-        [ValidateSet("Debug", "Release")]
-        [string]$Target = "Release"
-
+        [ValidateSet("Debug", "Release", "Any")]
+        [string]$Target = "Any"
     )
 
-    $DllPath = Get-ExtensionControlDllPath $Target 
-    if(($DllPath) -And (Test-Path $DllPath)){
-        return $DllPath
+    if(Test-ExtensionControlLoaded){
+        Write-Verbose "[Register-ExtensionControlDll] already loaded"
+        return;
     }
-    return $Null
+
+    $DllPath = Get-ExtensionControlDllPath $Target
+    if (($DllPath) -and (Test-Path $DllPath)) {
+        Write-Verbose "[Register-ExtensionControlDll] Add-Type -Path `"$DllPath`""
+        Add-Type -Path "$DllPath"
+    }else{
+        throw "No Assemblies Found"
+    }
 }
 
 
+function Test-ExtensionControlLoaded {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+
+    try{
+        $Obj = [WebExtensionPack.Controls.ExtensionStatus] -as [type]
+        return $True
+    }catch{
+        return $False
+    }
+}
+
+
+
 function Show-ExtensionItemDialog {
-    param ()
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
 
     Register-ExtensionControlDll
-
-    Add-Type -Path $DllPath
     Add-Type -AssemblyName PresentationFramework
 
     # Create window
@@ -75,6 +112,7 @@ function Show-ExtensionItemDialog {
 
     # Add ExtensionItem control
     $ctrl = New-Object WebExtensionPack.Controls.ExtensionItem
+    $ctrl.ResetExtensionStatus();
     $ctrl.ExtensionLabel = "Sample Extension"
     $ctrl.Status = [WebExtensionPack.Controls.ExtensionStatus]::Pending
     [System.Windows.Controls.Grid]::SetRow($ctrl, 0)
@@ -86,7 +124,7 @@ function Show-ExtensionItemDialog {
     $button.Width = 120
     $button.Height = 28
     $button.HorizontalAlignment = "Left"
-    $button.Margin = [System.Windows.Thickness]::new(0,10,0,0)
+    $button.Margin = [System.Windows.Thickness]::new(0, 10, 0, 0)
     [System.Windows.Controls.Grid]::SetRow($button, 1)
     $grid.Children.Add($button)
 
@@ -94,10 +132,10 @@ function Show-ExtensionItemDialog {
     $states = [WebExtensionPack.Controls.ExtensionStatus]::GetValues([WebExtensionPack.Controls.ExtensionStatus])
     $i = 0
     $button.Add_Click({
-        $i = ($i + 1) % $states.Count
-        $ctrl.Status = $states[$i]
-        $button.Content = "State: $($states[$i]) (click to cycle)"
-    })
+            $ctrl.SetNextExtensionStatus();
+            $currStatus = $ctrl.GetExtensionStatusString()
+            $button.Content = "State: $currStatus (click to cycle)"
+        })
     $button.Content = "State: Pending (click to cycle)"
 
     $window.Content = $grid
