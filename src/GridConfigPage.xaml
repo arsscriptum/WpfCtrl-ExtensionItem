@@ -1,0 +1,19 @@
+﻿<UserControl x:Class="WebExtensionPack.Controls.GridConfigPage"
+                         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                         xmlns:local="clr-namespace:WebExtensionPack.Controls"
+                         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+                         mc:Ignorable="d"
+                         d:DesignHeight="350" d:DesignWidth="400" >
+    <UserControl.Resources>
+    </UserControl.Resources>
+
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <CheckBox Content="Compare new files" IsChecked="{Binding Path=CompareNewFiles}" ToolTip="If files being added to source control should be compared." />
+            <Button Content="Restore Default Settings"  />
+        </StackPanel>
+    </Grid>
+</UserControl>
