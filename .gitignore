@@ -1,6 +1,13 @@
 *.pspp
 
+tmpPaths 
+tmpPaths/**
 
+tmpPath 
+tmpPath/**
+
+libs 
+libs/**
 
 bin/ 
 bin/** 
@@ -10,3 +17,9 @@ obj/**
 
 *.sln 
 *.user
+
+test/bin**
+test/bin 
+
+test/obj/**
+test/obj
