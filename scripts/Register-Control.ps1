@@ -1,4 +1,32 @@
 ﻿
+
+function Get-DeployedAssembliesPath {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+    process {
+        $DeployPath = Read-WpfCtrlSettings | Select -ExpandProperty 'deploy_assemblies_path'
+        return $DeployPath
+    }
+}
+
+
+function Get-TempObjectsPath {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+
+    $BinariesPath = Join-Path (Get-SourcesPath) "obj"
+    return $BinariesPath
+}
+
+
+function Get-DeployedRootPath {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+    process {
+        $DeployedRootPath = Read-WpfCtrlSettings | Select -ExpandProperty 'deployed_root_path'
+        return $DeployedRootPath
+    }
+}
 function Register-ExtensionControlDll {
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -16,13 +44,7 @@ function Register-ExtensionControlDll {
     if (($DllPath) -and (Test-Path $DllPath)) {
         Write-Verbose "[Register-ExtensionControlDll] Add-Type -Path `"$DllPath`""
         Add-Type -Path "$DllPath"
-
-        $SaveStrCmd = Get-Command -Name "New-RegListItem" -ErrorAction Ignore
-        if ($SaveStrCmd) {
-            $ProcessIdStr = "$pid"
-            New-RegListItem -Identifier "RegisteredExtensionControlProcessId" -String "$ProcessIdStr"
-        }
-
+        Add-WpfCtrlProcessId $pid
     } else {
         throw "No Assemblies Found"
     }
@@ -37,66 +59,82 @@ function Unregister-ExtensionControlDll {
         [switch]$Force
     )
 
-    $TmpPathsList = Get-RegListItemList -Identifier "TmpPaths"
-    $RemoveSavedStrCmd = Get-Command -Name "Remove-RegListItemString" -ErrorAction Ignore
-    $GetSavedStrCmd = Get-Command -Name "Get-RegListItemList" -ErrorAction Ignore
-    if ($GetSavedStrCmd) {
-        Write-Verbose "Get-RegListItemList RegisteredExtensionControlProcessId"
-        [string[]]$ProcessIdList = Get-RegListItemList -Identifier "RegisteredExtensionControlProcessId"
-        $ProcessIdListCount = $ProcessIdList.Count
-        Write-Verbose "$ProcessIdListCount Registration Entries"
-        if ($ProcessIdListCount -gt 0) {
-            foreach ($strProcessId in $ProcessIdList) {
-                try {
-                    $ProcessPtr = Get-Process -Id $Id -ErrorAction Stop
-                    [int]$Id = $strProcessId -as [int]
+
+    [System.Collections.ArrayList]$ProcessesFlagged = [System.Collections.ArrayList]::new()
+    [System.Collections.ArrayList]$ProcessesRemaining = [System.Collections.ArrayList]::new()
+    [System.Collections.ArrayList]$KilledProcessIds = [System.Collections.ArrayList]::new()
+    Write-Verbose "Get-RegListItemList RegisteredExtensionControlProcessId"
+
+    ((Read-WpfCtrlSettings | Select -ExpandProperty 'processes_using') -as [string[]]) | Select -Unique | sort | % { [void]$ProcessesRemaining.Add("$_") }
+    $ProcessesRemainingCount = $ProcessesFlagged.Count
+    $TotalKilledProcesses = 0
+    Write-Verbose "$ProcessIdListCount Registration Entries"
+
+    if ($ProcessIdListCount -gt 0) {
+        foreach ($strProcessId in $ProcessesFlagged) {
+
+            if ("$pid" -eq "$strProcessId") {
+                $StrErr = " ⚠️ skipping ourselved for now"
+                $Log = " {0,-30}" -f $StrErr
+                Write-Host "$Log`t" -n
+                Write-Host "$pname" -f DarkGreen
+
+            } else {
+
+                [int]$Id = $strProcessId -as [int]
+                $ProcessPtr = Get-Process -Id $Id -ErrorAction Ignore
+                if ($ProcessPtr) {
                     $Status = if ($Process.Responding) { "active and responding" } else { "process crashed, hanged" }
-                    $StrLog = "ExtensionControlDll registered by Process Id {0} [{1}.exe] ({2})" -f $Id, $Process.Name, $Status
+                    $pname = "Process Id {0} [{1}.exe]" -f $Id, $Process.Name
+                    $StrLog = "ExtensionControlDll {0} ({1})" -f $pname, $Status
                     Write-Verbose "$StrLog"
                     try {
-                        if ($RemoveSavedStrCmd) {
-                            Write-Verbose "Remove-RegListItemString $strProcessId"
-                            Remove-RegListItemString -Identifier "RegisteredExtensionControlProcessId" -String "$strProcessId"
-                        }
+                        $PtrId = $ProcessPtr.Id
                         $ProcessPtr | Stop-Process -ErrorAction Stop -Confirm:$False
+                        $TotalKilledProcesses++
+                        [void]$KilledProcessIds.Add($PtrId)
+                        [void]$ProcessesRemaining.Remove($PtrId)
+
+                        $StrErr = " ✔️ successfully killed"
+                        $Log = " {0,-30}" -f $StrErr
+                        Write-Host "$Log`t" -n
+                        Write-Host "$pname" -f DarkGreen
                     } catch {
+                        $StrErr = " ❌ Found Error"
+                        $Log = " {0,-30}" -f $StrErr
+                        Write-Host "$Log`t" -n
+                        Write-Host "$pname" -f DarkYellow
                         Write-Verbose "Cannot Stop Process PID $Id"
                     }
-                } catch {
-                    Write-Verbose "Cannot Retrieve Process Info for PID $Id"
                 }
+
             }
-        }else{
-            Write-Verbose "No Control Registration Found!"
-        }
-    }
 
-    if (!(Test-ExtensionControlLoaded)) {
-        Write-Verbose "[Register-ExtensionControlDll] not registered..."
-        return;
-    }else{
-        $ConfirmationNeeded = $True
-        if($Force){
-            $ConfirmationNeeded = $False
         }
-        [string]$sep = [string]::new('=',80)
-        $msg = "Custom WPF Control Registered in this PowerShell Process!!!"
-        $msgLen = $msg.Length 
-        $spCount = (80/2) - ($msgLen/2)
-        $padded = "{0}{1}" -f $spCount, $msg
-        Write-Host "$sep" -f DarkYellow
-        Write-Host "$msg" -f DarkRed
-        Write-Host "$sep`n" -f DarkYellow
-        Write-Host "Please confirm that we close this Powershell process [y/N] " -n -f DarkYellow
-        $a = Read-Host "?"
-        if($a -ne 'y'){
-            return
-        }
-        Write-Host "Custom WPF Control Registered in this PowerShell Process!!!"
-        [Environment]::Exit(0)
-
+    } else {
+        Write-Verbose "No Control Registration Found!"
     }
 }
+
+Write-Verbose "Killed $ProcessIdListCount processes out of a total of $ProcessIdListCount flagged pids. $notKilledCount not killed"
+
+$notKilledCount = $ProcessIdListCount - $TotalKilledProcesses
+$ProcessesRemaining | % {
+    if ($_ -eq $pid) {
+        Write-Host "process id $_ not killed --> this session"
+    } else {
+        Write-Host "process id $_ not killed --> error"
+    }
+}
+Write-Verbose "Killed $ProcessIdListCount processes out of a total of $ProcessIdListCount flagged pids"
+
+if (!(Test-ExtensionControlLoaded)) {
+    Write-Verbose "[Register-ExtensionControlDll] not registered..."
+    return;
+} else {
+    & "C:\Programs\PowerShell\Shims\7\pwsh_c_dev.exe"
+}
+
 
 
 function Test-ExtensionControlLoaded {

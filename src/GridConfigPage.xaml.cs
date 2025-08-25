@@ -12,19 +12,47 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-
+using System.Windows.Forms; // WinForms dialog, add reference if needed
 namespace WebExtensionPack.Controls
 {
     /// <summary>
     /// Interaction logic for GridConfigPagePageControl.xaml
     /// </summary>
-    public partial class GridConfigPagePageControl : UserControl
+    public partial class GridConfigPagePageControl : System.Windows.Controls.UserControl
     {
         /// <summary>
         /// A handle to the Settings instance that this control is bound to.
         /// </summary>
         private GridConfigSettings _settings = null;
 
+
+private void BrowseLogFilePath_Click(object sender, RoutedEventArgs e)
+{
+    var dialog = new SaveFileDialog();
+    dialog.Filter = "Log files (*.log)|*.log|All files (*.*)|*.*";
+    if (dialog.ShowDialog() == DialogResult.OK)
+        _settings.LogFilePath = dialog.FileName;
+}
+
+private void BrowseTemporaryDirectory_Click(object sender, RoutedEventArgs e)
+{
+    using (var dialog = new FolderBrowserDialog())
+    {
+        dialog.Description = "Select Temporary Directory";
+        if (dialog.ShowDialog() == DialogResult.OK)
+            _settings.TemporaryDirectory = dialog.SelectedPath;
+    }
+}
+
+private void BrowseFinalDestinationDirectory_Click(object sender, RoutedEventArgs e)
+{
+    using (var dialog = new FolderBrowserDialog())
+    {
+        dialog.Description = "Select Final Destination Directory";
+        if (dialog.ShowDialog() == DialogResult.OK)
+            _settings.FinalDestinationDirectory = dialog.SelectedPath;
+    }
+}
         public GridConfigPagePageControl(GridConfigSettings settings)
         {
             InitializeComponent();

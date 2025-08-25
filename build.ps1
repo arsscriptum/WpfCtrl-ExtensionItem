@@ -8,6 +8,29 @@ param(
     [switch]$Clean
 )
 
+$Script:TranscientString = ""
+
+if ([string]::IsNullOrEmpty($Script:TranscientString)) {
+    $Script:TranscientString = [guid]::NewGuid().ToString('N').SubString(0, 6).ToUpper()
+}
+
+$settings = Read-WpfCtrlSettings
+
+if ($Settings.scripts -and $Settings.scripts.Count -gt 0) {
+    foreach ($scriptPath in $Settings.scripts) {
+        if (Test-Path $scriptPath) {
+            Write-Verbose "Sourcing: $scriptPath"
+            .$scriptPath
+        } else {
+            Write-Warning "Script not found: $scriptPath"
+        }
+    }
+} else {
+    Write-Warning "No scripts listed in settings."
+}
+
+
+
 try {
 
     $ErrorMsg = @"
@@ -49,6 +72,18 @@ try {
     }
 
 
+    function Get-TranscientTempPath {
+        [CmdletBinding(SupportsShouldProcess)]
+        param()
+        $tmpDateStr = (Get-Date).ToString('HHmmss')
+
+        $libsPath = Join-Path (Get-ProjectRootPath) "libs"
+        $tmpPath = Join-Path "$libsPath" "tmp"
+        $TranscientTempPath = Join-Path $tmpPath "$($Script:TranscientString)"
+        if (!(Test-Path "$TranscientTempPath")) { New-Item -Path "$TranscientTempPath" -ItemType Directory -Force | out-Null }
+        return $TranscientTempPath
+    }
+
     function Get-ScriptsPath {
         [CmdletBinding(SupportsShouldProcess)]
         param()
@@ -57,6 +92,27 @@ try {
         return $ScriptsPath
     }
 
+    function Get-DeployedRootPath {
+        [CmdletBinding(SupportsShouldProcess)]
+        param()
+
+        $DeployedRootPath = Read-WpfCtrlSettings | Select -ExpandProperty 'deployed_root_path'
+        return $DeployedRootPath
+    }
+
+    function Get-CompiledLibrariesPath {
+        [CmdletBinding(SupportsShouldProcess)]
+        param(
+            [Parameter(Position = 0, Mandatory = $false, ValueFromPipeline = $true, HelpMessage = 'Input file paths')]
+            [string]$Target = " "
+        )
+        process {
+            $ENV:Target = "$Target"
+            $DeployPath = Read-WpfCtrlSettings | Select -ExpandProperty 'deploy_assemblies_path'
+            return $DeployPath
+        }
+
+    }
 
     function Get-BinariesPath {
         [CmdletBinding(SupportsShouldProcess)]
@@ -74,6 +130,37 @@ try {
         $BinariesPath = Join-Path (Get-SourcesPath) "obj"
         return $BinariesPath
     }
+
+
+    function Get-ProjectFrameworkVersion {
+        [CmdletBinding(SupportsShouldProcess)]
+        param()
+
+        $FrameworkVer = "net6.0-windows"
+        return $FrameworkVer
+    }
+
+
+    function Get-BinariesDebugPath {
+        [CmdletBinding(SupportsShouldProcess)]
+        param()
+
+        $DebugPath = Join-Path (Get-BinariesPath) "Debug"
+        $DebugPath = Join-Path $DebugPath (Get-ProjectFrameworkVersion)
+        return $DebugPath
+    }
+
+
+
+    function Get-BinariesReleasePath {
+        [CmdletBinding(SupportsShouldProcess)]
+        param()
+
+        $ReleasePath = Join-Path (Get-BinariesPath) "Release"
+        $ReleasePath = Join-Path $ReleasePath (Get-ProjectFrameworkVersion)
+        return $ReleasePath
+    }
+
 
 
 
@@ -192,6 +279,12 @@ try {
         }
     }
 
+    $commandName = Read-WpfCtrlSettings | Select -ExpandProperty 'unregister_assemblies'
+    $rcmd = Get-command -Name "$commandName" -ErrorAction Ignore
+    if ($rcmd) {
+        & $rcmd -Force
+    }
+
 
     "BUILDING $($Target.ToUpper()) TARGET" | Format-BuildTitle
 
@@ -200,7 +293,12 @@ try {
     Push-Location $srcPath
     $FrameworkVer = Get-ProjectFrameworkVersion
 
-
+    try {
+        Remove-Item (Get-CompiledLibrariesPath) -Recurse -Force -Confirm:$False -ErrorAction Stop
+    } catch {
+        $p = (Get-CompiledLibrariesPath)
+        Write-Host "$p are in use..."
+    }
     if ($Clean) {
         $ToDelete = @((Get-BinariesPath), (Get-TempObjectsPath))
         Write-Host "[CLEAN] " -f DarkRed -n
@@ -221,34 +319,100 @@ try {
     $Command = if ($Clean) { "clean" } else { "build" }
 
     if ($Target -eq 'All') {
-        & "$dotnetCmd" "$Command" '--framework' "$FrameworkVer" '-c' 'Debug'
-        if ($LASTEXITCODE -eq 0) {
-            $CommandId = "Get-Binaries{0}Path" -f "Debug"
-            $GetPathCmd = Get-Command -Name "$CommandId" -ErrorAction Ignore
-            $ResPath = & $GetPathCmd
-            $GeneratedFiles = Get-ChildItem "$ResPath" -File | Select -ExpandProperty FullName
-            "BUILD RESULTS" | Format-BuildTitle -Color Cyan
-            $GeneratedFiles | Format-BuildResults -Color Blue
+        $stdout = (New-TemporaryFile).FullName
+        $stderr = (New-TemporaryFile).FullName
+        [System.Collections.ArrayList]$LaunchArgs = [System.Collections.ArrayList]::new()
+        [void]$LaunchArgs.Add("$Command")
+        [void]$LaunchArgs.Add('--framework')
+        [void]$LaunchArgs.Add("$FrameworkVer")
+        [void]$LaunchArgs.Add('-c')
+        [void]$LaunchArgs.Add("Debug")
+        $SrcPath = Get-SourcesPath
+        $Parameters = @{
+            FilePath = "$dotnetCmd"
+            ArgumentList = $LaunchArgs
+            WorkingDirectory = "$SrcPath"
+            NoNewWindow = $true
+            Passthru = $true
+            RedirectStandardError = $stderr
+        }
+        $cmd = Start-Process @Parameters
+        while (!($cmd.HasExited)) { Start-Sleep -Milliseconds 500 }
+        $BuildReturnCode = $cmd.ExitCode
+        if ($BuildReturnCode -ne 0) {
+            Write-Host "Build Failure!"
         }
         $Command = "build"
-        & "$dotnetCmd" "$Command" '--framework' "$FrameworkVer" '-c' 'Release'
-        if ($LASTEXITCODE -eq 0) {
-            $CommandId = "Get-Binaries{0}Path" -f "Release"
-            $GetPathCmd = Get-Command -Name "$CommandId" -ErrorAction Ignore
-            $ResPath = & $GetPathCmd
-            $GeneratedFiles = Get-ChildItem "$ResPath" -File | Select -ExpandProperty FullName
-            "BUILD RESULTS" | Format-BuildTitle -Color Red
-            $GeneratedFiles | Format-BuildResults -Color Magenta
+        $stdout = (New-TemporaryFile).FullName
+        $stderr = (New-TemporaryFile).FullName
+        [System.Collections.ArrayList]$LaunchArgs = [System.Collections.ArrayList]::new()
+        [void]$LaunchArgs.Add("$Command")
+        [void]$LaunchArgs.Add('--framework')
+        [void]$LaunchArgs.Add("$FrameworkVer")
+        [void]$LaunchArgs.Add('-c')
+        [void]$LaunchArgs.Add("Release")
+        $SrcPath = Get-SourcesPath
+        $Parameters = @{
+            FilePath = "$dotnetCmd"
+            ArgumentList = $LaunchArgs
+            WorkingDirectory = "$SrcPath"
+            NoNewWindow = $true
+            Passthru = $true
+            RedirectStandardError = $stderr
+        }
+        $cmd = Start-Process @Parameters
+        while (!($cmd.HasExited)) { Start-Sleep -Milliseconds 500 }
+        $BuildReturnCode = $cmd.ExitCode
+        if ($BuildReturnCode -ne 0) {
+            Write-Host "Build Failure!"
         }
     } else {
         & "$dotnetCmd" "$Command" '--framework' "$FrameworkVer" '-c' "$Target"
     }
 
+    $BinariesDebugPath = @("$(Get-BinariesDebugPath)", "$(Get-BinariesReleasePath)")
+    if (!(Test-Path "$(Get-TranscientTempPath)")) { New-Item -Path "$(Get-TranscientTempPath)" -ItemType Directory -Force | out-Null }
+
+    $tmpDbg = Join-Path (Get-TranscientTempPath) "Debug"
+    $tmpRel = Join-Path (Get-TranscientTempPath) "Release"
+
+    $TranscientTempPaths = @("$($tmpDbg)", "$($tmpRel)")
+
+
+    "COMPILATION COMPLETED - DEPLOYING ASSEMBLIES TO WORKING DIRECTORIES" | Format-BuildTitle
+
+
+    0..1 | % {
+        $s = $BinariesDebugPath[$_]
+        $d = $TranscientTempPaths[$_]
+
+        $sourceExists = (Test-Path -Path "$s" -PathType Container)
+        $sourceFilesCount = (Get-ChildItem -Path "$s" -Recurse -File) | Measure-Count
+        if( ($sourceExists -eq $true) -and ($sourceFilesCount -gt 0) ) {
+            try {
+                $retVal = Move-Item -Path "$s" -Destination "$d" -Passthru -ErrorAction Stop
+            } catch {
+                Write-Host "[Deploy] " -f DarkRed -n
+                Write-Host "Attempt #1 => Relocation Failed. $_" -f DarkYellow
+            }
+            Write-Host "[Deploy] " -f DarkRed -n
+            Write-Host "Attempt #2 => Copy Assemblies Containers and all the files they contain to useable location. `"$s`" To Destination `"$d`"" -f DarkYellow
+            try {
+                $retVal = Copy-Item -Path $BinariesDebugPath -Destination "$DeployedRootPath" -Passthru -Recurse -ErrorAction Stop
+                Remove-Item -Path "$BinariesDebugPath" -Recurse -Force -ErrorAction Ignore | Out-Null
+            } catch {
+                Write-Host "[Deploy] " -f DarkRed -n
+                Write-Host "Attempt #2 => Copy Failed. $_" -f DarkYellow
+            }
+        }
+    }
+
+    if((Read-WpfCtrlSettings | Select -ExpandProperty 'register_assemblies_after_build') -eq 1){
+            "AUTOMATIC ASSEMBLY REGISTRATION" | Format-BuildTitle
+            Register-ExtensionControlDll
+    }
 
     Pop-Location
 } catch {
     Show-ExceptionDetails ($_)
-}
-finally {
-    Pop-Location
 }

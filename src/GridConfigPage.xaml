@@ -10,10 +10,139 @@
     <UserControl.Resources>
     </UserControl.Resources>
 
-    <Grid>
-        <StackPanel Orientation="Vertical">
-            <CheckBox Content="Compare new files" IsChecked="{Binding Path=CompareNewFiles}" ToolTip="If files being added to source control should be compared." />
-            <Button Content="Restore Default Settings"  />
-        </StackPanel>
-    </Grid>
+
+
+  <TabControl Margin="8">
+    <TabItem Header="General">
+      <ScrollViewer VerticalScrollBarVisibility="Auto">
+<GroupBox Header="General Settings" Margin="8">
+  <StackPanel>
+    <TextBlock Text="Log Level:"/>
+    <ComboBox SelectedItem="{Binding LogLevel, Mode=TwoWay}">
+      <ComboBoxItem Content="Info"/>
+      <ComboBoxItem Content="Debug"/>
+      <ComboBoxItem Content="Warning"/>
+      <ComboBoxItem Content="Error"/>
+    </ComboBox>
+
+    <TextBlock Text="Log File Path:" Margin="0,8,0,0"/>
+    <DockPanel>
+      <TextBox Text="{Binding LogFilePath, Mode=TwoWay}" Width="350"/>
+      <Button Content="..." Width="30" Margin="4,0,0,0"
+              Click="BrowseLogFilePath_Click"/>
+    </DockPanel>
+
+    <TextBlock Text="Log Channels:" Margin="0,8,0,0"/>
+    <StackPanel Orientation="Horizontal">
+      <CheckBox Content="GUI" IsChecked="{Binding LogChannelGui, Mode=TwoWay}" Margin="0,0,12,0"/>
+      <CheckBox Content="File" IsChecked="{Binding LogChannelFile, Mode=TwoWay}" Margin="0,0,12,0"/>
+      <CheckBox Content="Events" IsChecked="{Binding LogChannelEvents, Mode=TwoWay}" />
+    </StackPanel>
+
+    <CheckBox Content="Record Network Statistics"
+              IsChecked="{Binding RecordNetworkStatistics, Mode=TwoWay}"
+              Margin="0,8,0,0"/>
+
+    <TextBlock Text="Temporary Directory:" Margin="0,8,0,0"/>
+    <DockPanel>
+      <TextBox Text="{Binding TemporaryDirectory, Mode=TwoWay}" Width="350"/>
+      <Button Content="..." Width="30" Margin="4,0,0,0"
+              Click="BrowseTemporaryDirectory_Click"/>
+    </DockPanel>
+
+    <TextBlock Text="Final Destination Directory:" Margin="0,8,0,0"/>
+    <DockPanel>
+      <TextBox Text="{Binding FinalDestinationDirectory, Mode=TwoWay}" Width="350"/>
+      <Button Content="..." Width="30" Margin="4,0,0,0"
+              Click="BrowseFinalDestinationDirectory_Click"/>
+    </DockPanel>
+
+<CheckBox Content="Autorun Package Command"
+          IsChecked="{Binding AutorunPackageCommand, Mode=TwoWay}" 
+          Margin="0,8,0,0"/>
+
+
+    <CheckBox Content="Version Check on Start"
+              IsChecked="{Binding VersionCheckOnStart, Mode=TwoWay}"
+              Margin="0,8,0,0"/>
+
+    <CheckBox Content="Auto Update Enabled"
+              IsChecked="{Binding AutoUpdateEnabled, Mode=TwoWay}" />
+
+    <CheckBox Content="Message of the Day Enabled"
+              IsChecked="{Binding MessageOfTheDayEnabled, Mode=TwoWay}" />
+  </StackPanel>
+</GroupBox>
+      </ScrollViewer>
+    </TabItem>
+    <TabItem Header="Network">
+      <ScrollViewer VerticalScrollBarVisibility="Auto">
+       <GroupBox Header="Network" Margin="8">
+  <StackPanel>
+
+    <TextBlock Text="Transfer Mode:"/>
+    <ComboBox SelectedItem="{Binding TransferMode, Mode=TwoWay}">
+      <ComboBoxItem Content="BITS TRANSFER"/>
+      <ComboBoxItem Content="Aria2c"/>
+      <ComboBoxItem Content="WGet"/>
+      <ComboBoxItem Content="Web Requests"/>
+    </ComboBox>
+
+    <TextBlock Text="Max Parallel Jobs:" Margin="0,8,0,0"/>
+    <TextBox Text="{Binding MaxParallelJobs, Mode=TwoWay}" />
+
+    <TextBlock Text="Priority:" Margin="0,8,0,0"/>
+    <TextBox Text="{Binding Priority, Mode=TwoWay}" />
+
+    <TextBlock Text="Retry Interval (seconds):" Margin="0,8,0,0"/>
+    <TextBox Text="{Binding RetryInterval, Mode=TwoWay}" />
+
+    <TextBlock Text="Retry Timeout (seconds):" Margin="0,8,0,0"/>
+    <TextBox Text="{Binding RetryTimeout, Mode=TwoWay}" />
+
+    <TextBlock Text="Max Download Time (seconds):" Margin="0,8,0,0"/>
+    <TextBox Text="{Binding MaxDownloadTime, Mode=TwoWay}" />
+
+    <CheckBox Content="Proxy Authentication" IsChecked="{Binding ProxyAuthentication, Mode=TwoWay}" Margin="0,8,0,0"/>
+
+    <TextBlock Text="Proxy Bypass:" Margin="0,8,0,0"/>
+    <TextBox Text="{Binding ProxyBypass, Mode=TwoWay}" />
+
+    <TextBlock Text="Proxy Credential:" Margin="0,8,0,0"/>
+    <TextBox Text="{Binding ProxyCredential, Mode=TwoWay}" />
+
+    <CheckBox Content="Proxy Usage" IsChecked="{Binding ProxyUsage, Mode=TwoWay}" Margin="0,8,0,0"/>
+
+    <TextBlock Text="Proxy List:" Margin="0,8,0,0"/>
+    <TextBox Text="{Binding ProxyList, Mode=TwoWay}" />
+
+    <TextBlock Text="Notify Flags:" Margin="0,8,0,0"/>
+    <ComboBox SelectedItem="{Binding NotifyFlags, Mode=TwoWay}">
+      <ComboBoxItem Content="None"/>
+      <ComboBoxItem Content="JobError"/>
+      <ComboBoxItem Content="JobTransferred"/>
+      <ComboBoxItem Content="Disable"/>
+    </ComboBox>
+
+    <TextBlock Text="Notify CmdLine:" Margin="0,8,0,0"/>
+    <TextBox Text="{Binding NotifyCmdLine, Mode=TwoWay}" />
+
+  </StackPanel>
+</GroupBox>
+
+      </ScrollViewer>
+    </TabItem>
+
+  </TabControl>
+
+
+
+
+
+
+
 </UserControl>
+
+
+
+
