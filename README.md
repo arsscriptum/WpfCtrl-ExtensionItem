@@ -162,3 +162,46 @@ If there's a error in one of the script, you will get a notification [like this]
 The ```ErrorDetails``` argument can be used to go through all the errors and list the stack and details...:
 
 ![deps](img/deps.gif)
+
+## Settings Page - Design - List of the Configuration Values
+
+**Category - General**
+ - Log Level
+ - Log File Path
+ - Log Channels (Gui/File/Events)
+ - Record Network Statistics
+ - Temporary Directory (staging area when downloading, deciphering, and reconstructing the binary data)
+ - Final Destination Directory for Packages
+ - Autorun Package Command
+ - Version Check on Start
+ - Auto Update Enabled/Disabled
+ - Message of the Day Enabled/Disabled
+
+**Data Validation**
+ - Signature Verification Required
+ - Package Digest Required
+
+**Category - Network**
+ - Transfer Mode - BITS TRANSFER, Aria2c, WGet, Web Requests
+ - MAx Parallel Jobs
+ - Priority
+ - RetryInterval
+ - RetryTimeout
+ - MaxDownloadTime
+ - ProxyAuthentication
+ - ProxyBypass
+ - ProxyCredential
+ - ProxyUsage
+ - ProxyLisy
+ - NotifyFlags None, JobError, JobTransferred, Disable
+ - NotifyCmdLine
+
+**Category - Stats**
+ - Generate Error Report on Error
+ - Gather System Information
+
+**License**
+ - Username
+ - Company Name
+ - License Key
+
