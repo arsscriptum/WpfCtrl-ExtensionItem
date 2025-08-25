@@ -1,8 +1,16 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
 
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+    <EnableDefaultPageItems>false</EnableDefaultPageItems>
+
   </PropertyGroup>
+<ItemGroup>
+  <Page Include="GridConfigPage.xaml" />
+  <Page Include="ExtensionItem.xaml" />
+</ItemGroup>
+
 
 </Project>

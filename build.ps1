@@ -10,6 +10,92 @@ param(
 
 try {
 
+    $ErrorMsg = @"
+
+                           _____ ____  ____   ___  ____  
+                          | ____|  _ \|  _ \ / _ \|  _ \ 
+                          |  _| | |_) | |_) | | | | |_) |
+                          | |___|  _ <|  _ <| |_| |  _ < 
+                          |_____|_| \_\_| \_\\___/|_| \_\
+
+"@
+
+
+
+    $AssembliesMsg = @"
+
+      __   __   ___        __          ___  __           __   __        ___  __ 
+ /\  /__` /__` |__   |\/| |__) |    | |__  /__`    |    /  \ /  ` |__/ |__  |  \
+/~~\ .__/ .__/ |___  |  | |__) |___ | |___ .__/    |___ \__/ \__, |  \ |___ |__/
+
+"@
+
+
+    function Get-ProjectRootPath {
+        [CmdletBinding(SupportsShouldProcess)]
+        param()
+
+        $ProjectRootPath = "C:\Dev\WpfCtrl-ExtensionItem"
+        return $ProjectRootPath
+    }
+
+
+    function Get-SourcesPath {
+        [CmdletBinding(SupportsShouldProcess)]
+        param()
+
+        $SourcesPath = Join-Path (Get-ProjectRootPath) "src"
+        return $SourcesPath
+    }
+
+
+    function Get-ScriptsPath {
+        [CmdletBinding(SupportsShouldProcess)]
+        param()
+
+        $ScriptsPath = Join-Path (Get-ProjectRootPath) "scripts"
+        return $ScriptsPath
+    }
+
+
+    function Get-BinariesPath {
+        [CmdletBinding(SupportsShouldProcess)]
+        param()
+
+        $BinariesPath = Join-Path (Get-SourcesPath) "bin"
+        return $BinariesPath
+    }
+
+
+    function Get-TempObjectsPath {
+        [CmdletBinding(SupportsShouldProcess)]
+        param()
+
+        $BinariesPath = Join-Path (Get-SourcesPath) "obj"
+        return $BinariesPath
+    }
+
+
+
+
+    function Get-ProjectFrameworkVersion {
+        [CmdletBinding(SupportsShouldProcess)]
+        param()
+
+        $FrameworkVer = "net6.0-windows"
+        return $FrameworkVer
+    }
+
+
+    function Get-BinariesDebugPath {
+        [CmdletBinding(SupportsShouldProcess)]
+        param()
+
+        $DebugPath = Join-Path (Get-BinariesPath) "Debug"
+        $DebugPath = Join-Path $DebugPath (Get-ProjectFrameworkVersion)
+        return $DebugPath
+    }
+
 
     function Get-ProjectFrameworkVersion {
         [CmdletBinding(SupportsShouldProcess)]
@@ -31,7 +117,7 @@ try {
         )
 
         process {
-            $NegativeColor = @{Cyan='Red'; Red='Cyan'; Green='Magenta'; Magenta='Green'; Yellow='Blue'; Blue='Yellow'; Gray='White'; Black='White'; White='DarkBlue'; DarkBlue='White'}[$Color]
+            $NegativeColor = @{ Cyan = 'Red'; Red = 'Cyan'; Green = 'Magenta'; Magenta = 'Green'; Yellow = 'Blue'; Blue = 'Yellow'; Gray = 'White'; Black = 'White'; White = 'DarkBlue'; DarkBlue = 'White' }[$Color]
             $TitleColor = $Color
             $sep = [string]::new("=", 80)
             $titleLen = $Title.Length
@@ -120,8 +206,17 @@ try {
         Write-Host "[CLEAN] " -f DarkRed -n
         Write-Host "Removing Transciemt Directories" -f DarkYellow
         $ToDelete | % { Write-Host "  -> $_" -f DarkYellow }
-        Remove-Item $ToDelete -Recurse -Force -Confirm:$False -ErrorAction Ignore
+        try {
+            Remove-Item $ToDelete -Recurse -Force -Confirm:$False -ErrorAction Stop
+        } catch {
+            Write-Host "$ErrorMsg" -f DarkRed
+            Write-Host "$AssembliesMsg" -f DarkRed
+            Unregister-ExtensionControlDll -Force
+        }
+
     }
+
+
 
     $Command = if ($Clean) { "clean" } else { "build" }
 
@@ -132,7 +227,7 @@ try {
             $GetPathCmd = Get-Command -Name "$CommandId" -ErrorAction Ignore
             $ResPath = & $GetPathCmd
             $GeneratedFiles = Get-ChildItem "$ResPath" -File | Select -ExpandProperty FullName
-            "BUILD RESULTS" | Format-BuildTitle  -Color Cyan
+            "BUILD RESULTS" | Format-BuildTitle -Color Cyan
             $GeneratedFiles | Format-BuildResults -Color Blue
         }
         $Command = "build"
@@ -142,7 +237,7 @@ try {
             $GetPathCmd = Get-Command -Name "$CommandId" -ErrorAction Ignore
             $ResPath = & $GetPathCmd
             $GeneratedFiles = Get-ChildItem "$ResPath" -File | Select -ExpandProperty FullName
-            "BUILD RESULTS" | Format-BuildTitle  -Color Red
+            "BUILD RESULTS" | Format-BuildTitle -Color Red
             $GeneratedFiles | Format-BuildResults -Color Magenta
         }
     } else {

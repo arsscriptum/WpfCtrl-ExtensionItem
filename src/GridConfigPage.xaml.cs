@@ -25,12 +25,13 @@ namespace WebExtensionPack.Controls
         /// </summary>
         private GridConfigSettings _settings = null;
 
-        public GridConfigPagePageControl(GridConfigPage settings)
+        public GridConfigPagePageControl(GridConfigSettings settings)
         {
-           // InitializeComponent();
-           // _settings = settings;
+            InitializeComponent();
+            _settings = settings;
             this.DataContext = _settings;
         }
+
 
         private void btnRestoreDefaultSettings_Click(object sender, RoutedEventArgs e)
         {

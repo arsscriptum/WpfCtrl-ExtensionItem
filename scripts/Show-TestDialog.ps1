@@ -52,26 +52,21 @@ function Show-ExtensionItemDialog {
     $window.ShowDialog()
 }
 
-<#
+
 function Show-SettingsDialog {
     [CmdletBinding(SupportsShouldProcess)]
     param()
-
-    Register-ExtensionControlDll
     Add-Type -AssemblyName PresentationFramework
-var settings = new GridConfigSettings();
-var control = new GridConfigPagePageControl(settings);
+    Add-Type -AssemblyName PresentationCore
 
-var dialog = new Window
-{
-    Title = "Options",
-    Content = control,
-    SizeToContent = SizeToContent.WidthAndHeight,
-    WindowStartupLocation = WindowStartupLocation.CenterOwner,
-    Owner = Application.Current.MainWindow
-};
 
-dialog.ShowDialog();
+    $settings = New-Object WebExtensionPack.Controls.GridConfigSettings
+    $ctrl = New-Object WebExtensionPack.Controls.GridConfigPagePageControl ($settings)
+    $window = New-Object Windows.Window
+    $window.Title = "Test GridConfigPage"
+    $window.Content = $ctrl
+    $window.Width = 500
+    $window.Height = 400
+    $window.ShowDialog()
 
 }
-#>
