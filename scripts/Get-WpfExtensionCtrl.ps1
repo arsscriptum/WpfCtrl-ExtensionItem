@@ -1,14 +1,4 @@
-﻿#╔════════════════════════════════════════════════════════════════════════════════╗
-#║                                                                                ║
-#║   Get-ExtensionControlDllPath.ps1                                              ║
-#║   Test functions for my WPF control                                            ║
-#║                                                                                ║
-#╟────────────────────────────────────────────────────────────────────────────────╢
-#║   Guillaume Plante <codegp@icloud.com>                                         ║
-#║   Code licensed under the GNU GPL v3.0. See the LICENSE file for details.      ║
-#╚════════════════════════════════════════════════════════════════════════════════╝
-
-
+﻿
 function Get-ExtensionControlDllPath {
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -19,13 +9,9 @@ function Get-ExtensionControlDllPath {
     )
 
     try {
-
         $LibBasename = "WebExtensionPack.Controls"
         $LibName = "{0}.dll" -f $LibBasename
-        $RootPath = (Resolve-Path "$PsScriptRoot\..").Path
-        [string]$BinaryRootPath = "{0}\src\bin" -f $RootPath
-        [string]$DebugBinaryPath = Join-Path "$BinaryRootPath" "Debug"
-        [string]$ReleaseBinaryPath = Join-Path "$BinaryRootPath" "Release"
+        $BinaryRootPath = Get-BinariesPath
 
         if ($Target -eq 'Any') {
             Write-Verbose "[Get-ExtensionControlDllPath] Any Targets -> Searching in `"$BinaryRootPath`""

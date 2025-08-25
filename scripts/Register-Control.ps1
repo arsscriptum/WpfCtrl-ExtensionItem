@@ -1,15 +1,4 @@
-﻿#╔════════════════════════════════════════════════════════════════════════════════╗
-#║                                                                                ║
-#║   Register-Control.ps1                                                         ║
-#║   Test functions for my WPF control                                            ║
-#║                                                                                ║
-#╟────────────────────────────────────────────────────────────────────────────────╢
-#║   Guillaume Plante <codegp@icloud.com>                                         ║
-#║   Code licensed under the GNU GPL v3.0. See the LICENSE file for details.      ║
-#╚════════════════════════════════════════════════════════════════════════════════╝
-
-
-
+﻿
 function Register-ExtensionControlDll {
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -31,7 +20,7 @@ function Register-ExtensionControlDll {
         $SaveStrCmd = Get-Command -Name "New-RegListItem" -ErrorAction Ignore
         if ($SaveStrCmd) {
             $ProcessIdStr = "$pid"
-            & $SaveStrCmd -Identifier "RegisteredExtensionControlProcessId" -String "$ProcessIdStr"
+            New-RegListItem -Identifier "RegisteredExtensionControlProcessId" -String "$ProcessIdStr"
         }
 
     } else {
@@ -53,7 +42,7 @@ function Unregister-ExtensionControlDll {
     $GetSavedStrCmd = Get-Command -Name "Get-RegListItemList" -ErrorAction Ignore
     if ($GetSavedStrCmd) {
         Write-Verbose "Get-RegListItemList RegisteredExtensionControlProcessId"
-        [string[]]$ProcessIdList = & $GetSavedStrCmd -Identifier "RegisteredExtensionControlProcessId"
+        [string[]]$ProcessIdList = Get-RegListItemList -Identifier "RegisteredExtensionControlProcessId"
         $ProcessIdListCount = $ProcessIdList.Count
         Write-Verbose "$ProcessIdListCount Registration Entries"
         if ($ProcessIdListCount -gt 0) {
@@ -67,7 +56,7 @@ function Unregister-ExtensionControlDll {
                     try {
                         if ($RemoveSavedStrCmd) {
                             Write-Verbose "Remove-RegListItemString $strProcessId"
-                            & $RemoveSavedStrCmd -Identifier "RegisteredExtensionControlProcessId" -String "$strProcessId"
+                            Remove-RegListItemString -Identifier "RegisteredExtensionControlProcessId" -String "$strProcessId"
                         }
                         $ProcessPtr | Stop-Process -ErrorAction Stop -Confirm:$False
                     } catch {

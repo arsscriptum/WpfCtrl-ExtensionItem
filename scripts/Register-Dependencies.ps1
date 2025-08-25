@@ -1,14 +1,4 @@
-﻿#╔════════════════════════════════════════════════════════════════════════════════╗
-#║                                                                                ║
-#║   Register-Dependencies.ps1                                                    ║
-#║   Test functions for my WPF control                                            ║
-#║                                                                                ║
-#╟────────────────────────────────────────────────────────────────────────────────╢
-#║   Guillaume Plante <codegp@icloud.com>                                         ║
-#║   Code licensed under the GNU GPL v3.0. See the LICENSE file for details.      ║
-#╚════════════════════════════════════════════════════════════════════════════════╝
-
-
+﻿
 [CmdletBinding(SupportsShouldProcess)]
 param(
         [Parameter(Mandatory = $false, HelpMessage = "targets")]
@@ -16,6 +6,61 @@ param(
         [Parameter(Mandatory = $false, HelpMessage = "ShowStack")]
         [switch]$ShowStack
 )
+
+
+function Get-ProjectRootPath {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+
+    $ProjectRootPath = "C:\Dev\WpfCtrl-ExtensionItem"
+    return $ProjectRootPath
+}
+
+
+function Get-SourcesPath {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+
+    $SourcesPath =  Join-Path (Get-ProjectRootPath) "src"
+    return $SourcesPath
+}
+
+
+function Get-ScriptsPath {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+
+    $ScriptsPath =  Join-Path (Get-ProjectRootPath) "scripts"
+    return $ScriptsPath
+}
+
+
+function Get-BinariesPath {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+
+    $BinariesPath =  Join-Path (Get-SourcesPath) "bin"
+    return $BinariesPath
+}
+
+
+function Get-BinariesDebugPath {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+
+    $DebugPath =  Join-Path (Get-BinariesPath) "Debug"
+    return $DebugPath
+}
+
+
+function Get-BinariesReleasePath {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+
+    $ReleasePath =  Join-Path (Get-BinariesPath) "Release"
+    return $ReleasePath
+}
+
 
 function Register-ScriptDependencies {
     [CmdletBinding(SupportsShouldProcess)]
@@ -25,14 +70,33 @@ function Register-ScriptDependencies {
         [Parameter(Mandatory = $false, HelpMessage = "ShowStack")]
         [switch]$ShowStack
     )
+
     [System.Collections.ArrayList]$ScriptErrors = [System.Collections.ArrayList]::new()
-    $ScriptPath = (Resolve-Path "$PSScriptRoot").Path
+    $ScriptPath = Get-ScriptsPath
     $AllScripts = Get-ChildITem -Path "$ScriptPath" -File -Filter "*.ps1"  | Select -ExpandProperty name | Where { $_ -notmatch "Register-Dependencies" }
     foreach ($sname in $AllScripts) {
         $spath = Join-Path "$ScriptPath" "$sname"
         Write-Verbose "Sourcing `"$sname`""
+        
         try {
-            . "$spath"
+            $ScriptData = Get-Content -Path "$spath" -Raw
+            $NumBytes = $ScriptData.Lenght
+            $code  = @"
+
+
+Write-Verbose 'SOURCING $sname which is $NumBytes bytes'
+
+$ScriptData
+
+
+"@
+           #Write-Verbose "$code"
+           $sb = [ScriptBlock]::Create($code)
+           . $sb
+             #Invoke-Expression -Command $sb
+           Get-ExtensionControlDllPath
+           
+         
             $StrErr = " ✔️ successfully sourced"
             $Log = " {0,-30}" -f $StrErr
             Write-Host "$Log`t" -n
@@ -48,6 +112,8 @@ function Register-ScriptDependencies {
             }
         }
     }
+   
+
     $ScriptErrorsCount = $ScriptErrors.Count
     if (($ErrorDetails) -and ($ScriptErrorsCount)) {
         Write-Host "[Error Details] " -f DarkRed -n

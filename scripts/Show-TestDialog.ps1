@@ -1,15 +1,4 @@
-#╔════════════════════════════════════════════════════════════════════════════════╗
-#║                                                                                ║
-#║   Show-ExtensionItemDialog.ps1                                                 ║
-#║   Test functions for my WPF control                                            ║
-#║                                                                                ║
-#╟────────────────────────────────────────────────────────────────────────────────╢
-#║   Guillaume Plante <codegp@icloud.com>                                         ║
-#║   Code licensed under the GNU GPL v3.0. See the LICENSE file for details.      ║
-#╚════════════════════════════════════════════════════════════════════════════════╝
-
-
-
+﻿
 function Show-ExtensionItemDialog {
     [CmdletBinding(SupportsShouldProcess)]
     param()
@@ -62,3 +51,27 @@ function Show-ExtensionItemDialog {
     $window.Content = $grid
     $window.ShowDialog()
 }
+
+<#
+function Show-SettingsDialog {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+
+    Register-ExtensionControlDll
+    Add-Type -AssemblyName PresentationFramework
+var settings = new GridConfigSettings();
+var control = new GridConfigPagePageControl(settings);
+
+var dialog = new Window
+{
+    Title = "Options",
+    Content = control,
+    SizeToContent = SizeToContent.WidthAndHeight,
+    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+    Owner = Application.Current.MainWindow
+};
+
+dialog.ShowDialog();
+
+}
+#>
