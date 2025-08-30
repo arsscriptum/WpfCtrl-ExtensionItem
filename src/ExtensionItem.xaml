@@ -79,7 +79,7 @@
 
         </Grid>
 <!-- Add these inside your main Grid, alongside your existing status grids -->
-
+ 
 <!-- Warning: ⚠ -->
 <Grid x:Name="GridWarning" Grid.Column="0" Visibility="Collapsed">
     <TextBlock Text="⚠" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Orange"/>
@@ -90,51 +90,66 @@
     <TextBlock Text="❌" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Red"/>
 </Grid>
 
-<!-- Idle: ❒ -->
+<!-- Idle: ⚡ -->
 <Grid x:Name="GridIdle" Grid.Column="0" Visibility="Collapsed">
-    <TextBlock Text="❒" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FF292929"/>
+    <TextBlock Text="⚡" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FF292929"/>
 </Grid>
 
-       <!-- Download: Animated Arrow -->
-<Grid x:Name="GridPending" Grid.Column="0">
-    <Canvas Width="24" Height="24">
-        <!-- Arrow shaft -->
-        <Rectangle Width="4" Height="10" Canvas.Left="10" Canvas.Top="4" Fill="#2196F3" RadiusX="1" RadiusY="1"/>
-        <!-- Arrow head -->
-        <Polygon Points="6,14 12,20 18,14"
-                 Fill="#2196F3"
-                 x:Name="ArrowHead"/>
-        <!-- Dots (simulate file chunks) -->
-        <Ellipse Width="3" Height="3" Canvas.Left="10.5" Canvas.Top="22" Fill="#2196F3" x:Name="Dot"/>
-    </Canvas>
+<!-- Download: Animated Arrow, fits in 25x25, always centered/scaled -->
+<Grid x:Name="GridPending" Grid.Column="0" Width="25" Height="25" Visibility="Collapsed">
+    <Viewbox Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Grid Width="25" Height="25">
+            <!-- Top chevron -->
+            <Path x:Name="TopChevron"
+                  Data="M 5,7 L 12.5,15 L 20,7"
+                  Stroke="Black"
+                  StrokeThickness="2.5"
+                  StrokeEndLineCap="Round"
+                  StrokeStartLineCap="Round"
+                  Opacity="0.6">
+                <Path.RenderTransform>
+                    <TranslateTransform Y="0"/>
+                </Path.RenderTransform>
+            </Path>
+            <!-- Bottom chevron, will animate downward -->
+            <Path x:Name="BottomChevron"
+                  Data="M 5,13 L 12.5,21 L 20,13"
+                  Stroke="Black"
+                  StrokeThickness="2.5"
+                  StrokeEndLineCap="Round"
+                  StrokeStartLineCap="Round"
+                  Opacity="1">
+                <Path.RenderTransform>
+                    <TranslateTransform x:Name="BottomChevronTransform" Y="0"/>
+                </Path.RenderTransform>
+            </Path>
+        </Grid>
+    </Viewbox>
     <Grid.Triggers>
         <EventTrigger RoutedEvent="Grid.Loaded">
             <BeginStoryboard>
                 <Storyboard RepeatBehavior="Forever">
-                    <!-- Bounce the arrow head down/up -->
-                    <DoubleAnimation Storyboard.TargetName="ArrowHead"
-                                     Storyboard.TargetProperty="(Canvas.Top)"
-                                     From="14" To="18"
-                                     Duration="0:0:0.4"
-                                     AutoReverse="True"/>
-                    <!-- Move the dot upward to simulate movement -->
-                    <DoubleAnimation Storyboard.TargetName="Dot"
-                                     Storyboard.TargetProperty="(Canvas.Top)"
-                                     From="22" To="12"
+                    <DoubleAnimation Storyboard.TargetName="BottomChevronTransform"
+                                     Storyboard.TargetProperty="Y"
+                                     From="0" To="5"
                                      Duration="0:0:0.8"
-                                     RepeatBehavior="Forever"
                                      AutoReverse="False"/>
-                    <DoubleAnimation Storyboard.TargetName="Dot"
+                    <DoubleAnimation Storyboard.TargetName="BottomChevron"
                                      Storyboard.TargetProperty="Opacity"
                                      From="1" To="0"
                                      Duration="0:0:0.8"
-                                     RepeatBehavior="Forever"
                                      AutoReverse="False"/>
+                    <DoubleAnimation Storyboard.TargetName="TopChevron"
+                                     Storyboard.TargetProperty="Opacity"
+                                     From="0.6" To="1"
+                                     Duration="0:0:0.8"
+                                     AutoReverse="True"/>
                 </Storyboard>
             </BeginStoryboard>
         </EventTrigger>
     </Grid.Triggers>
 </Grid>
+
 
 
         <TextBlock x:Name="ExtensionName"
