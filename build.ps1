@@ -1,23 +1,26 @@
+﻿#╔════════════════════════════════════════════════════════════════════════════════╗
+#║                                                                                ║
+#║   build_.ps1                                                                   ║
+#║   Test functions for my WPF control                                            ║
+#║                                                                                ║
+#╟────────────────────────────────────────────────────────────────────────────────╢
+#║   Guillaume Plante <codegp@icloud.com>                                         ║
+#║   Code licensed under the GNU GPL v3.0. See the LICENSE file for details.      ║
+#╚════════════════════════════════════════════════════════════════════════════════╝
 
-[CmdletBinding(SupportsShouldProcess)]
-param(
-    [Parameter(Position = 0, Mandatory = $false, HelpMessage = "targets")]
-    [ValidateSet("Debug", "Release", "All")]
-    [string]$Target = "All",
-    [Parameter(Mandatory = $false)]
-    [switch]$Clean
-)
 
-$Script:TranscientString = ""
+
+[uint32]$Script:BuildCounter = 0
+[string]$Script:TranscientString = ""
 
 if ([string]::IsNullOrEmpty($Script:TranscientString)) {
     $Script:TranscientString = [guid]::NewGuid().ToString('N').SubString(0, 6).ToUpper()
 }
+<#
+$CtrlSettings = Read-WpfCtrlSettings
 
-$settings = Read-WpfCtrlSettings
-
-if ($Settings.scripts -and $Settings.scripts.Count -gt 0) {
-    foreach ($scriptPath in $Settings.scripts) {
+if ($CtrlSettings.scripts -and $CtrlSettings.scripts.Count -gt 0) {
+    foreach ($scriptPath in $CtrlSettings.scripts) {
         if (Test-Path $scriptPath) {
             Write-Verbose "Sourcing: $scriptPath"
             .$scriptPath
@@ -30,7 +33,7 @@ if ($Settings.scripts -and $Settings.scripts.Count -gt 0) {
 }
 
 
-
+#>
 try {
 
     $ErrorMsg = @"
@@ -71,13 +74,21 @@ try {
         return $SourcesPath
     }
 
+    function Get-TemporaryBuildDirectory {
+        [CmdletBinding(SupportsShouldProcess)]
+        param()
+
+        $TmpLibsPath = Join-Path (Get-ProjectRootPath) "libs"
+        if (!(Test-Path "$TmpLibsPath")) { New-Item -Path "$TmpLibsPath" -ItemType Directory -Force | out-Null }
+        return $TmpLibsPath
+    }
 
     function Get-TranscientTempPath {
         [CmdletBinding(SupportsShouldProcess)]
         param()
         $tmpDateStr = (Get-Date).ToString('HHmmss')
 
-        $libsPath = Join-Path (Get-ProjectRootPath) "libs"
+        $libsPath = Get-TemporaryBuildDirectory
         $tmpPath = Join-Path "$libsPath" "tmp"
         $TranscientTempPath = Join-Path $tmpPath "$($Script:TranscientString)"
         if (!(Test-Path "$TranscientTempPath")) { New-Item -Path "$TranscientTempPath" -ItemType Directory -Force | out-Null }
@@ -162,16 +173,6 @@ try {
     }
 
 
-
-
-
-    function Get-ProjectFrameworkVersion {
-        [CmdletBinding(SupportsShouldProcess)]
-        param()
-
-        $FrameworkVer = "net6.0-windows"
-        return $FrameworkVer
-    }
 
 
     function Get-BinariesDebugPath {
@@ -279,14 +280,13 @@ try {
         }
     }
 
-    $commandName = Read-WpfCtrlSettings | Select -ExpandProperty 'unregister_assemblies'
-    $rcmd = Get-command -Name "$commandName" -ErrorAction Ignore
-    if ($rcmd) {
-        & $rcmd -Force
-    }
+
+    Write-Host "[Cleanup] Delete the Temporary library directories..."
+    $TmpBuildDirectory = Get-TemporaryBuildDirectory
+    Remove-Item -Path "$TmpBuildDirectory" -Recurse -Force -ErrorAction Ignore
 
 
-    "BUILDING $($Target.ToUpper()) TARGET" | Format-BuildTitle
+    #"BUILDING $($Target.ToUpper()) TARGET" | Format-BuildTitle
 
     $srcPath = Get-SourcesPath
     $dotnetCmd = (Get-Command "dotnet.exe" -ErrorAction Stop).Source
@@ -309,70 +309,59 @@ try {
         } catch {
             Write-Host "$ErrorMsg" -f DarkRed
             Write-Host "$AssembliesMsg" -f DarkRed
-            Unregister-ExtensionControlDll -Force
         }
 
     }
 
+    Push-Location "$srcPath"
 
 
-    $Command = if ($Clean) { "clean" } else { "build" }
 
-    if ($Target -eq 'All') {
-        $stdout = (New-TemporaryFile).FullName
-        $stderr = (New-TemporaryFile).FullName
-        [System.Collections.ArrayList]$LaunchArgs = [System.Collections.ArrayList]::new()
-        [void]$LaunchArgs.Add("$Command")
-        [void]$LaunchArgs.Add('--framework')
-        [void]$LaunchArgs.Add("$FrameworkVer")
-        [void]$LaunchArgs.Add('-c')
-        [void]$LaunchArgs.Add("Debug")
-        $SrcPath = Get-SourcesPath
-        $Parameters = @{
-            FilePath = "$dotnetCmd"
-            ArgumentList = $LaunchArgs
-            WorkingDirectory = "$SrcPath"
-            NoNewWindow = $true
-            Passthru = $true
-            RedirectStandardError = $stderr
-        }
-        $cmd = Start-Process @Parameters
-        while (!($cmd.HasExited)) { Start-Sleep -Milliseconds 500 }
-        $BuildReturnCode = $cmd.ExitCode
-        if ($BuildReturnCode -ne 0) {
-            Write-Host "Build Failure!"
-        }
-        $Command = "build"
-        $stdout = (New-TemporaryFile).FullName
-        $stderr = (New-TemporaryFile).FullName
-        [System.Collections.ArrayList]$LaunchArgs = [System.Collections.ArrayList]::new()
-        [void]$LaunchArgs.Add("$Command")
-        [void]$LaunchArgs.Add('--framework')
-        [void]$LaunchArgs.Add("$FrameworkVer")
-        [void]$LaunchArgs.Add('-c')
-        [void]$LaunchArgs.Add("Release")
-        $SrcPath = Get-SourcesPath
-        $Parameters = @{
-            FilePath = "$dotnetCmd"
-            ArgumentList = $LaunchArgs
-            WorkingDirectory = "$SrcPath"
-            NoNewWindow = $true
-            Passthru = $true
-            RedirectStandardError = $stderr
-        }
-        $cmd = Start-Process @Parameters
-        while (!($cmd.HasExited)) { Start-Sleep -Milliseconds 500 }
-        $BuildReturnCode = $cmd.ExitCode
-        if ($BuildReturnCode -ne 0) {
-            Write-Host "Build Failure!"
-        }
-    } else {
-        & "$dotnetCmd" "$Command" '--framework' "$FrameworkVer" '-c' "$Target"
+    $Command = "build" #if ($Clean) { "clean" } else { "build" }
+
+
+    $Script:BuildCounter++
+
+
+    Write-Host "[Build] " -f DarkRed -n
+    Write-Host "Source Path is $srcPath. Changing Current Path to it..." -f DarkYellow
+
+    Write-Host "[Build] " -f DarkRed -n
+    Write-Host "Also using WorkingDirectory Argument `"$srcPath`" " -f DarkYellow
+
+    [System.Management.Automation.PathInfo]$ProjectInfo = Resolve-Path -Path "WebExtensionPack.Controls.csproj" -RelativeBasePath "$srcPath"
+
+    $stdout = (New-TemporaryFile).FullName
+    $stderr = (New-TemporaryFile).FullName
+    $TranscientTempPath = Get-TranscientTempPath
+    [System.Collections.ArrayList]$LaunchArgs = [System.Collections.ArrayList]::new()
+    [void]$LaunchArgs.Add("$Command")
+  # [void]$LaunchArgs.Add("$($ProjectInfo.Path)")
+    [void]$LaunchArgs.Add('-f')
+    [void]$LaunchArgs.Add("$FrameworkVer")
+    [void]$LaunchArgs.Add('-c')
+    [void]$LaunchArgs.Add("$target")
+    [void]$LaunchArgs.Add('-o')
+    [void]$LaunchArgs.Add("$TranscientTempPath")
+   
+    $Parameters = @{
+        FilePath = "$dotnetCmd"
+        ArgumentList = $LaunchArgs
+        WorkingDirectory = "$srcPath"
+        NoNewWindow = $true
+        Passthru = $true
+        RedirectStandardError = $stderr
     }
+    $cmd = Start-Process @Parameters
+    while (!($cmd.HasExited)) { Start-Sleep -Milliseconds 500 }
+    $BuildReturnCode = $cmd.ExitCode
+    if ($BuildReturnCode -ne 0) {
+        Write-Host "Build Failure!"
+    }
+
+    
 
     $BinariesDebugPath = @("$(Get-BinariesDebugPath)", "$(Get-BinariesReleasePath)")
-    if (!(Test-Path "$(Get-TranscientTempPath)")) { New-Item -Path "$(Get-TranscientTempPath)" -ItemType Directory -Force | out-Null }
-
     $tmpDbg = Join-Path (Get-TranscientTempPath) "Debug"
     $tmpRel = Join-Path (Get-TranscientTempPath) "Release"
 
@@ -381,14 +370,15 @@ try {
 
     "COMPILATION COMPLETED - DEPLOYING ASSEMBLIES TO WORKING DIRECTORIES" | Format-BuildTitle
 
-
+<#
     0..1 | % {
         $s = $BinariesDebugPath[$_]
         $d = $TranscientTempPaths[$_]
 
         $sourceExists = (Test-Path -Path "$s" -PathType Container)
-        $sourceFilesCount = (Get-ChildItem -Path "$s" -Recurse -File) | Measure-Count
-        if( ($sourceExists -eq $true) -and ($sourceFilesCount -gt 0) ) {
+        $sourceFilesCount = if ($sourceExists) { ((Get-ChildItem -Path "$s" -Recurse -File -EA Ignore) | Measure-Count) } else { 0 }
+
+        if (($sourceExists -eq $true) -and ($sourceFilesCount -gt 0)) {
             try {
                 $retVal = Move-Item -Path "$s" -Destination "$d" -Passthru -ErrorAction Stop
             } catch {
@@ -407,12 +397,13 @@ try {
         }
     }
 
-    if((Read-WpfCtrlSettings | Select -ExpandProperty 'register_assemblies_after_build') -eq 1){
-            "AUTOMATIC ASSEMBLY REGISTRATION" | Format-BuildTitle
-            Register-ExtensionControlDll
+    if ((Read-WpfCtrlSettings | Select -ExpandProperty 'register_assemblies_after_build') -eq 1) {
+        "AUTOMATIC ASSEMBLY REGISTRATION" | Format-BuildTitle
+        Register-ExtensionControlDll
     }
+    #>
 
     Pop-Location
 } catch {
-    Show-ExceptionDetails ($_)
+    Show-ExceptionDetails ($_) -ShowStack
 }
