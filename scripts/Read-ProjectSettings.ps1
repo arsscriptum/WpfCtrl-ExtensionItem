@@ -222,26 +222,37 @@ function Write-WpfCtrlSettings {
 
 function Reset-WpfCtrlSettings {
     [CmdletBinding(SupportsShouldProcess)]
-    param()
+    param(
+        [Parameter(Mandatory = $false)]
+        [string]$Path
+    )
 
-    process {
-
-        [pscustomobject]$ProjectSettings = [pscustomobject]@{
-            'register_assemblies' = "register-ExtensionControlDll"
-            'unregister_assemblies' = "Unregister-ExtensionControlDll"
-            'project_root' = "C:\Dev\WpfCtrl-ExtensionItem"
-            'deployed_root_path' = "C:\Dev\WpfCtrl-ExtensionItem\tmp"
-            'deploy_assemblies_path' = "C:\Dev\WpfCtrl-ExtensionItem\tmp\%Target%"
-            'register_assemblies_after_build' = 0
-            'scripts' = @("C:\Dev\WpfCtrl-ExtensionItem\scripts\Get-WpfExtensionCtrl.ps1",
-                "C:\Dev\WpfCtrl-ExtensionItem\scripts\Register-Control.ps1",
-                "C:\Dev\WpfCtrl-ExtensionItem\scripts\Register-Dependencies.ps1",
-                "C:\Dev\WpfCtrl-ExtensionItem\scripts\Show-TestDialog.ps1")
-        }
-        $ProjectSettings | Write-WpfCtrlSettings
-        Add-WpfCtrlProcessId 123
+    $BasePath = ""
+    if ([string]::IsNullOrEmpty($Path)) {
+        $BasePath = "C:\Dev\WpfCtrl-ExtensionItem"
+    } else {
+        $BasePath = (Resolve-Path -Path "$Path").Path
     }
+
+
+    [pscustomobject]$ProjectSettings = [pscustomobject]@{
+        'register_assemblies' = "register-ExtensionControlDll"
+        'unregister_assemblies' = "Unregister-ExtensionControlDll"
+        'project_root' = "$BasePath"
+        'deployed_root_path' = "$BasePath\libs"
+        'deploy_assemblies_path' = "$BasePath\libs\%Target%"
+        'register_assemblies_after_build' = 0
+        'scripts' = @("$BasePath\scripts\Get-WpfExtensionCtrl.ps1",
+            "$BasePath\scripts\Register-Control.ps1",
+            "$BasePath\scripts\Register-Dependencies.ps1",
+            "$BasePath\scripts\Show-TestDialog.ps1")
+    }
+    $ProjectSettings | Write-WpfCtrlSettings
+    Add-WpfCtrlProcessId $pid
+
 }
+
+
 
 
 function Read-WpfCtrlSettings {
