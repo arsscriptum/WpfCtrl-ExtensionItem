@@ -17,7 +17,7 @@ namespace WebExtensionPack.Controls
     {
         None,
         Pending,
-        Loading,
+        CloudDownload,
         Completed,
         Warning,
         Error,
@@ -54,11 +54,12 @@ namespace WebExtensionPack.Controls
             // Define custom sequence
             var sequence = new ExtensionStatus[]
             {
-        ExtensionStatus.Idle,       // ❒
-        ExtensionStatus.Warning,    // ⚠
-        ExtensionStatus.Error,      // ❌
-        ExtensionStatus.Loading,    // Spinner
-        ExtensionStatus.Completed   // Tick
+                ExtensionStatus.Idle,      
+                ExtensionStatus.Warning,    
+                ExtensionStatus.Error,     
+                ExtensionStatus.Pending,    
+                ExtensionStatus.CloudDownload,    
+                ExtensionStatus.Completed
             };
 
             int idx = Array.IndexOf(sequence, _status);
@@ -78,8 +79,8 @@ namespace WebExtensionPack.Controls
 
         private void UpdateStatus()
         {
+            GridCloudDownload.Visibility = (_status == ExtensionStatus.CloudDownload) ? Visibility.Visible : Visibility.Collapsed;
             GridPending.Visibility = (_status == ExtensionStatus.Pending) ? Visibility.Visible : Visibility.Collapsed;
-            GridLoading.Visibility = (_status == ExtensionStatus.Loading) ? Visibility.Visible : Visibility.Collapsed;
             GridTick.Visibility = (_status == ExtensionStatus.Completed) ? Visibility.Visible : Visibility.Collapsed;
             GridWarning.Visibility = (_status == ExtensionStatus.Warning) ? Visibility.Visible : Visibility.Collapsed;
             GridError.Visibility = (_status == ExtensionStatus.Error) ? Visibility.Visible : Visibility.Collapsed;
