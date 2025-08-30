@@ -95,26 +95,47 @@
     <TextBlock Text="❒" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FF292929"/>
 </Grid>
 
-        <Grid x:Name="GridPending"
-              Grid.Column="0">
-            <Path Data="M27.270001,0L44.310001,0 44.310001,48.643002 27.270001,48.643002z M0,0L17.040001,0 17.040001,48.643002 0,48.643002z"
-                  Stretch="Uniform"
-                  Fill="#FF292929"
-                  Width="16"
-                  Height="16"
-                  Margin="0,0,0,0"
-                  RenderTransformOrigin="0.5,0.5">
-                <Path.RenderTransform>
-                    <TransformGroup>
-                        <TransformGroup.Children>
-                            <RotateTransform Angle="0" />
-                            <ScaleTransform ScaleX="1"
-                                            ScaleY="1" />
-                        </TransformGroup.Children>
-                    </TransformGroup>
-                </Path.RenderTransform>
-            </Path>
-        </Grid>
+       <!-- Download: Animated Arrow -->
+<Grid x:Name="GridPending" Grid.Column="0">
+    <Canvas Width="24" Height="24">
+        <!-- Arrow shaft -->
+        <Rectangle Width="4" Height="10" Canvas.Left="10" Canvas.Top="4" Fill="#2196F3" RadiusX="1" RadiusY="1"/>
+        <!-- Arrow head -->
+        <Polygon Points="6,14 12,20 18,14"
+                 Fill="#2196F3"
+                 x:Name="ArrowHead"/>
+        <!-- Dots (simulate file chunks) -->
+        <Ellipse Width="3" Height="3" Canvas.Left="10.5" Canvas.Top="22" Fill="#2196F3" x:Name="Dot"/>
+    </Canvas>
+    <Grid.Triggers>
+        <EventTrigger RoutedEvent="Grid.Loaded">
+            <BeginStoryboard>
+                <Storyboard RepeatBehavior="Forever">
+                    <!-- Bounce the arrow head down/up -->
+                    <DoubleAnimation Storyboard.TargetName="ArrowHead"
+                                     Storyboard.TargetProperty="(Canvas.Top)"
+                                     From="14" To="18"
+                                     Duration="0:0:0.4"
+                                     AutoReverse="True"/>
+                    <!-- Move the dot upward to simulate movement -->
+                    <DoubleAnimation Storyboard.TargetName="Dot"
+                                     Storyboard.TargetProperty="(Canvas.Top)"
+                                     From="22" To="12"
+                                     Duration="0:0:0.8"
+                                     RepeatBehavior="Forever"
+                                     AutoReverse="False"/>
+                    <DoubleAnimation Storyboard.TargetName="Dot"
+                                     Storyboard.TargetProperty="Opacity"
+                                     From="1" To="0"
+                                     Duration="0:0:0.8"
+                                     RepeatBehavior="Forever"
+                                     AutoReverse="False"/>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Grid.Triggers>
+</Grid>
+
 
         <TextBlock x:Name="ExtensionName"
                    Grid.Column="2"
