@@ -37,29 +37,57 @@ function Get-DeployedRootPath {
         return $DeployedRootPath
     }
 }
+
 function Register-ExtensionControlDll {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Position = 0, Mandatory = $false, HelpMessage = "targets")]
         [ValidateSet("Debug", "Release", "Any")]
-        [string]$Target = "Any"
+        [string]$Target = "Any",
+        [Parameter(Mandatory = $false)]
+        [switch]$Force
     )
 
-    if (Test-ExtensionControlLoaded) {
-        Write-Verbose "[Register-ExtensionControlDll] already loaded"
-        return;
+    $DoCheck = $True
+    if ($Force) {
+        $DoCheck = $False
+    }
+
+
+    if ($DoCheck) {
+        if (Test-ExtensionControlLoaded) {
+            Write-Verbose "[Register-ExtensionControlDll] already loaded"
+            return;
+        }
     }
 
     $DllPath = Get-ExtensionControlDllPath $Target
     if (($DllPath) -and (Test-Path $DllPath)) {
         Write-Verbose "[Register-ExtensionControlDll] Add-Type -Path `"$DllPath`""
-        Add-Type -Path "$DllPath"
-        Add-WpfCtrlProcessId $pid
+        $moduleType = Add-Type -Path "$DllPath" -Passthru
+        $DllItem = Get-Item -Path "$DllPath"
+        $DllBaseName = $DllItem.BaseName
+        $typeNames = $moduleType | Select -ExpandProperty Name
+        foreach ($typename in $typeNames) {
+            $fullTypeName = "{0}.{1}" -f $DllBaseName, $typename
+            $typeTest = Get-Type -FullName "$fullTypeName" -ErrorAction Ignore
+            if ($typeTest) {
+                $mtname = $typeTest.Name
+                $mtmod = $typeTest.Module
+                $log = " ✔  type {0} loaded from module `"{1}`"" -f $mtname, $mtmod
+                Write-Host "$log" -f White
+            } else {
+                $mtname = $typeTest.Name
+                $mtmod = $typeTest.Module
+                $log = " ❌  type {0} not loaded" -f $fullTypeName
+                Write-Host "$log" -f DarkYellow
+            }
+
+        }
     } else {
         throw "No Assemblies Found"
     }
 }
-
 
 
 function Unregister-ExtensionControlDll {
@@ -124,25 +152,6 @@ function Unregister-ExtensionControlDll {
     } else {
         Write-Verbose "No Control Registration Found!"
     }
-}
-
-Write-Verbose "Killed $ProcessIdListCount processes out of a total of $ProcessIdListCount flagged pids. $notKilledCount not killed"
-
-$notKilledCount = $ProcessIdListCount - $TotalKilledProcesses
-$ProcessesRemaining | % {
-    if ($_ -eq $pid) {
-        Write-Host "process id $_ not killed --> this session"
-    } else {
-        Write-Host "process id $_ not killed --> error"
-    }
-}
-Write-Verbose "Killed $ProcessIdListCount processes out of a total of $ProcessIdListCount flagged pids"
-
-if (!(Test-ExtensionControlLoaded)) {
-    Write-Verbose "[Register-ExtensionControlDll] not registered..."
-    return;
-} else {
-    & "C:\Programs\PowerShell\Shims\7\pwsh_c_dev.exe"
 }
 
 

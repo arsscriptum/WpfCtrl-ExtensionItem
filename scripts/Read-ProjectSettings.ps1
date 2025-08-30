@@ -230,9 +230,9 @@ function Reset-WpfCtrlSettings {
             'register_assemblies' = "register-ExtensionControlDll"
             'unregister_assemblies' = "Unregister-ExtensionControlDll"
             'project_root' = "C:\Dev\WpfCtrl-ExtensionItem"
-            'deployed_root_path' = "C:\Dev\WpfCtrl-ExtensionItem\libs"
-            'deploy_assemblies_path' = "C:\Dev\WpfCtrl-ExtensionItem\libs\%Target%"
-            'register_assemblies_after_build' = 1
+            'deployed_root_path' = "C:\Dev\WpfCtrl-ExtensionItem\tmp"
+            'deploy_assemblies_path' = "C:\Dev\WpfCtrl-ExtensionItem\tmp\%Target%"
+            'register_assemblies_after_build' = 0
             'scripts' = @("C:\Dev\WpfCtrl-ExtensionItem\scripts\Get-WpfExtensionCtrl.ps1",
                 "C:\Dev\WpfCtrl-ExtensionItem\scripts\Register-Control.ps1",
                 "C:\Dev\WpfCtrl-ExtensionItem\scripts\Register-Dependencies.ps1",

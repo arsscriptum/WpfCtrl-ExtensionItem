@@ -121,7 +121,6 @@ $ScriptData
         #Invoke-Expression -Command $sb
         Get-ExtensionControlDllPath
 
-
         $StrErr = " ✔️ successfully sourced"
         $Log = " {0,-30}" -f $StrErr
         Write-Host "$Log`t" -n
