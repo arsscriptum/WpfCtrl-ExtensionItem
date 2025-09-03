@@ -11,9 +11,10 @@
     <UseWPF>true</UseWPF>
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
+
   <ItemGroup>
     <Reference Include="WebExtensionPack.Controls">
-      <HintPath>C:\Dev\WpfCtrl-ExtensionItem\src\bin\Debug\net6.0-windows\WebExtensionPack.Controls.dll</HintPath>
+      <HintPath>..\src\bin\Release\net4.7.2-windows\WebExtensionPack.Controls.dll</HintPath>
     </Reference>
   </ItemGroup>
 
