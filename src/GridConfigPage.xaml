@@ -5,16 +5,16 @@
                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                          xmlns:local="clr-namespace:WebExtensionPack.Controls"
                          xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-                         mc:Ignorable="d" d:DesignWidth="400" Height="660" >
+                         mc:Ignorable="d" d:DesignWidth="400" Height="510" >
     <UserControl.Resources>
     </UserControl.Resources>
 
 
 
-    <TabControl Margin="8,8,8,0" Height="500" VerticalAlignment="Top">
+    <TabControl Margin="8,8,8,10" Height="510" Width="357">
         <TabItem Header="General" FontFamily="Microsoft Sans Serif" FontSize="11">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <GroupBox Header="General Settings" Margin="8" FontFamily="Microsoft Sans Serif" FontSize="11" Height="615">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,0,-32">
+                <GroupBox Header="General Settings" FontFamily="Microsoft Sans Serif" FontSize="11" Height="auto" Width="auto">
                     <StackPanel>
                         <TextBlock Text="Log Level:" FontFamily="Microsoft Sans Serif" FontSize="10" Margin="0,8,0,0"/>
                         <ComboBox SelectedItem="{Binding LogLevel, Mode=TwoWay}" Margin="10,8,20,0">
@@ -58,7 +58,7 @@
 
                         <CheckBox Content="Autorun Package Command"
           IsChecked="{Binding AutorunPackageCommand, Mode=TwoWay}" 
-          Margin="0,8,0,0" FontSize="10"/>
+          Margin="0,18,0,0" FontSize="10"/>
 
 
                         <CheckBox Content="Version Check on Start"
@@ -76,7 +76,7 @@
         </TabItem>
         <TabItem Header="Network" FontFamily="Microsoft Sans Serif" FontSize="11">
             <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,0,0">
-                <GroupBox Header="Network" Margin="8" FontFamily="Microsoft Sans Serif" FontSize="11" Height="616">
+                <GroupBox Header="Network" FontFamily="Microsoft Sans Serif" FontSize="11" Height="auto">
                     <StackPanel>
                         <TextBlock Text="Transfer Mode:" FontSize="10" Margin="0,8,0,0"/>
                         <ComboBox SelectedItem="{Binding TransferMode, Mode=TwoWay}" Margin="10,8,0,0">
@@ -87,20 +87,27 @@
                         </ComboBox>
 
                         <TextBlock Text="Max Parallel Jobs:" Margin="0,8,0,0" FontSize="10"/>
-                        <TextBox Text="{Binding MaxParallelJobs, Mode=TwoWay}" Margin="10,8,10,0" />
+                        <ComboBox SelectedItem="{Binding MaxParallelJobs, Mode=TwoWay}" Margin="10,8,0,0">
+                            <ComboBoxItem Content="64"/>
+                            <ComboBoxItem Content="32"/>
+                            <ComboBoxItem Content="16"/>
+                            <ComboBoxItem Content="8"/>
+                            <ComboBoxItem Content="1"/>
+                        </ComboBox>
 
                         <TextBlock Text="Priority:" Margin="0,8,0,0"/>
-                        <TextBox Text="{Binding Priority, Mode=TwoWay}" Margin="10,8,10,0" />
-
+                        <ComboBox SelectedItem="{Binding PriorityMode, Mode=TwoWay}" Margin="10,8,0,0">
+                            <ComboBoxItem Content="Foreground"/>
+                            <ComboBoxItem Content="High"/>
+                            <ComboBoxItem Content="Normal"/>
+                            <ComboBoxItem Content="Low"/>
+                        </ComboBox>
                         <TextBlock Text="Retry Interval (seconds):" Margin="0,8,0,0"/>
                         <TextBox Text="{Binding RetryInterval, Mode=TwoWay}" Margin="10,8,10,0" />
 
                         <TextBlock Text="Retry Timeout (seconds):" Margin="0,8,0,0"/>
                         <TextBox Text="{Binding RetryTimeout, Mode=TwoWay}" Margin="10,8,10,0" />
 
-                        <TextBlock Text="Max Download Time (seconds):" Margin="0,8,0,0"/>
-                        <TextBox Text="" Margin="10,8,10,0" />
-                        
                         <CheckBox Content="Proxy Authentication" IsChecked="{Binding ProxyAuthentication, Mode=TwoWay}" Margin="0,12,20,0" Height="16" RenderTransformOrigin="0.449,1.161"/>
 
                         <TextBlock Text="Proxy Bypass:" Margin="0,8,0,0"/>
@@ -114,7 +121,7 @@
                         <TextBlock Text="Proxy List:" Margin="0,8,0,0"/>
                         <TextBox Text="{Binding ProxyList, Mode=TwoWay}" Margin="10,8,0,0" />
 
-      
+
                     </StackPanel>
                 </GroupBox>
 
