@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <Reference Include="WebExtensionPack.Controls">
-      <HintPath>..\src\bin\Release\net4.7.2-windows\WebExtensionPack.Controls.dll</HintPath>
+      <HintPath>..\src\bin\Release\net472\WebExtensionPack.Controls.dll</HintPath>
     </Reference>
   </ItemGroup>
 

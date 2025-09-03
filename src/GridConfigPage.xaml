@@ -5,17 +5,17 @@
                              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                              xmlns:local="clr-namespace:WebExtensionPack.Controls"
                              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-                             mc:Ignorable="d" d:DesignWidth="400" Height="369" >
+                             mc:Ignorable="d" d:DesignWidth="400" Height="396.461" >
     <UserControl.Resources>
     </UserControl.Resources>
 
 
 
-    <TabControl Margin="8,8,8,10" Height="320" Width="357">
+    <TabControl Margin="12,0,31,10" Width="357">
         <TabItem Header="General" FontFamily="Microsoft Sans Serif" FontSize="11">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,0,-4" Height="390" VerticalAlignment="Top">
-                <GroupBox Header="General Settings" FontFamily="Microsoft Sans Serif" FontSize="11" Height="365" Width="auto">
-                    <StackPanel Height="295" VerticalAlignment="Top">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Height="362" VerticalAlignment="Top" Margin="0,0,0,0">
+                <GroupBox Header="General Settings" FontFamily="Microsoft Sans Serif" FontSize="11" Height="356" Width="346" >
+                    <StackPanel>
 
 
 
@@ -62,8 +62,8 @@
             </ScrollViewer>
         </TabItem>
         <TabItem Header="Logs Settings" FontFamily="Microsoft Sans Serif" FontSize="11">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,0,0">
-                <GroupBox Header="Logging" FontFamily="Microsoft Sans Serif" Margin="10,8,20,0" FontSize="11" Height="auto">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,0,0" VerticalAlignment="Top">
+                <GroupBox Header="Logging" FontFamily="Microsoft Sans Serif" Margin="0,0,0,0" FontSize="11" Height="360" Width="345">
                     <StackPanel>
                         <TextBlock Text="Log Level:" FontFamily="Microsoft Sans Serif" FontSize="11" Margin="10,8,0,0"/>
                         <ComboBox SelectedItem="{Binding LogLevel, Mode=TwoWay}" Margin="10,8,20,0" FontSize="11" Height="18">
@@ -91,9 +91,9 @@
         </TabItem>
 
         <TabItem Header="Network" FontFamily="Microsoft Sans Serif" FontSize="11">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,0,0">
-                <GroupBox Header="Network" FontFamily="Microsoft Sans Serif" FontSize="11" Height="auto" Margin="10,8,20,0">
-                    <StackPanel Margin="0,0,0,34">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,0,0" VerticalAlignment="Top">
+                <GroupBox Header="Network" FontFamily="Microsoft Sans Serif" FontSize="11" Height="360" Width="346" >
+                    <StackPanel Margin="0,0,0,-19">
 
                         <CheckBox Content="Record Network Statistics"
                   IsChecked="{Binding RecordNetworkStatistics, Mode=TwoWay}"

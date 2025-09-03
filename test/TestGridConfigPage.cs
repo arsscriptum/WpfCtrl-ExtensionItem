@@ -15,8 +15,8 @@ namespace TestHarness
             {
                 Title = "Test GridConfigPage",
                 Content = ctrl,
-                Width = 500,
-                Height = 400
+                SizeToContent = SizeToContent.WidthAndHeight,
+                ResizeMode = ResizeMode.CanMinimize
             };
             var app = new Application();
             app.Run(window);
