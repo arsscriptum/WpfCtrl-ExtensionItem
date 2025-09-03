@@ -63,17 +63,6 @@ function Get-TempObjectsPath {
 }
 
 
-
-
-function Get-ProjectFrameworkVersion {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
-
-    $FrameworkVer = "net6.0-windows"
-    return $FrameworkVer
-}
-
-
 function Get-BinariesDebugPath {
     [CmdletBinding(SupportsShouldProcess)]
     param()

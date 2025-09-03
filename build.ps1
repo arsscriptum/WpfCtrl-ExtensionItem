@@ -143,13 +143,15 @@ try {
     }
 
 
+
     function Get-ProjectFrameworkVersion {
         [CmdletBinding(SupportsShouldProcess)]
         param()
-
-        $FrameworkVer = "net6.0-windows"
+        #$FrameworkVer = "net6.0-windows"
+        $FrameworkVer = "net472"
         return $FrameworkVer
     }
+
 
 
     function Get-BinariesDebugPath {

@@ -14,6 +14,18 @@
 . "C:\Dev\PsBuild\BuildQueue.ps1"
 . "C:\Dev\PsBuild\BuildRequest.ps1"
 
+
+
+function Get-ProjectFrameworkVersion {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+    #$FrameworkVer = "net6.0-windows"
+    $FrameworkVer = "net472"
+    return $FrameworkVer
+}
+
+
+$FrameworkVer = Get-ProjectFrameworkVersion
 $ProjectPath = (Resolve-Path -PAth "$PSScriptRoot").Path
 $scriptsPath = Join-Path $ProjectPath "scripts"
 $RegisterDepScript = Join-Path $scriptsPath "Register-Dependencies.ps1"
@@ -25,7 +37,7 @@ $Target = "Release"
 Remove-ITem -Path "$BinPath" -Force -Recurse -ErrorAction Ignore | Out-Null
 Remove-ITem -Path "$ArtifactsPath" -Force -REcurse -ErrorAction Ignore | Out-Null
 
-$request2 = New-BuildRequest -WorkingDirectory "$BuildPath" -ProjectFilePath "WebExtensionPack.Controls.csproj" -Architecture "win-x64" -OutputPath "bin" -DeployPath "$libsPath" -ArtifactsPath "artifacts" -Configuration "Release" -Framework "net6.0-windows" -Version "1.0.1" -LogLevel Normal -Owner "gp"
+$request2 = New-BuildRequest -WorkingDirectory "$BuildPath" -ProjectFilePath "WebExtensionPack.Controls.csproj" -Architecture "win-x64" -OutputPath "bin" -DeployPath "$libsPath" -ArtifactsPath "artifacts" -Configuration "Release" -Framework "$FrameworkVer" -Version "1.0.1" -LogLevel Normal -Owner "gp"
 
 while (BuildsRemaining) {
     $BuildRequest = Get-NextBuildRequest

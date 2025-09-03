@@ -125,15 +125,17 @@
         <!-- Add these inside your main Grid, alongside your existing status grids -->
         <!-- Warning: ⚠ -->
         <Grid x:Name="GridWarning" Grid.Column="0" Visibility="Collapsed">
-            <TextBlock Text="⚠" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#F5B027"/>
+            <TextBlock Text="⚠" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Orange"/>
         </Grid>
+
         <!-- Error: ❌ -->
         <Grid x:Name="GridError" Grid.Column="0" Visibility="Collapsed">
             <TextBlock Text="❌" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Red"/>
         </Grid>
-        <!-- Idle: ☠  -->
+
+        <!-- Idle: ❒ -->
         <Grid x:Name="GridIdle" Grid.Column="0" Visibility="Collapsed">
-            <TextBlock Text="☠" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
+            <TextBlock Text="❒" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FF292929"/>
         </Grid>
         <!-- Download: Animated Arrow, fits in 25x25, always centered/scaled -->
         <Grid x:Name="GridPending" Grid.Column="0" Width="25" Height="25" Visibility="Collapsed">
