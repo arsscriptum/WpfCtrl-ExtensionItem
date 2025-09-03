@@ -1,134 +1,158 @@
-﻿<UserControl x:Class="WebExtensionPack.Controls.GridConfigPagePageControl"
-                         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                         xmlns:local="clr-namespace:WebExtensionPack.Controls"
-                         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-                         mc:Ignorable="d" d:DesignWidth="400" Height="510" >
-    <UserControl.Resources>
-    </UserControl.Resources>
+﻿    <UserControl x:Class="WebExtensionPack.Controls.GridConfigPagePageControl"
+                             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                             xmlns:local="clr-namespace:WebExtensionPack.Controls"
+                             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+                             mc:Ignorable="d" d:DesignWidth="400" Height="510" >
+        <UserControl.Resources>
+        </UserControl.Resources>
 
 
 
-    <TabControl Margin="8,8,8,10" Height="510" Width="357">
-        <TabItem Header="General" FontFamily="Microsoft Sans Serif" FontSize="11">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,0,-32">
-                <GroupBox Header="General Settings" FontFamily="Microsoft Sans Serif" FontSize="11" Height="auto" Width="auto">
+        <TabControl Margin="8,8,8,10" Height="410" Width="357">
+            <TabItem Header="General" FontFamily="Microsoft Sans Serif" FontSize="11">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,0,-32">
+                <GroupBox Header="General Settings" FontFamily="Microsoft Sans Serif" FontSize="11" Height="auto" Width="auto" Margin="10,8,20,0">
+                        <StackPanel>
+                           
+
+
+
+                            <TextBlock Text="Temporary Directory:" Margin="10,18,0,0" FontFamily="Microsoft Sans Serif" FontSize="11"/>
+                            <DockPanel>
+                            <TextBox Text="{Binding TemporaryDirectory, Mode=TwoWay}" Width="260" Margin="10,8,0,0" Height="18"/>
+                            <Button Content="..." Width="30" Margin="4,5,0,0" Height="18"
+                            Click="BrowseTemporaryDirectory_Click"/>
+                            </DockPanel>
+
+                        <TextBlock Text="Final Destination Directory:" Margin="10,8,0,0" FontFamily="Microsoft Sans Serif" FontSize="11" Height="18"/>
+                        <DockPanel>
+                            <TextBox Text="{Binding FinalDestinationDirectory, Mode=TwoWay}"  Width="260" Margin="10,8,0,0" Height="18"/>
+                            <Button Content="..." Width="30" Height="18"  Margin="4,5,00,0"
+                  Click="BrowseFinalDestinationDirectory_Click"/>
+                            </DockPanel>
+
+                            <CheckBox Content="Autorun Package Command"
+              IsChecked="{Binding AutorunPackageCommand, Mode=TwoWay}" 
+              Margin="10,18,0,0" FontSize="11"/>
+
+
+                            <CheckBox Content="Version Check on Start"
+                  IsChecked="{Binding VersionCheckOnStart, Mode=TwoWay}"
+                  Margin="10,8,0,0" FontSize="11"/>
+
+                            <CheckBox Content="Auto Update Enabled"
+                  IsChecked="{Binding AutoUpdateEnabled, Mode=TwoWay}" FontSize="11" Margin="10,8,0,0"/>
+
+                            <CheckBox Content="Message of the Day Enabled"
+                  IsChecked="{Binding MessageOfTheDayEnabled, Mode=TwoWay}" FontSize="11" Margin="10,8,0,0" />
+                        </StackPanel>
+                    </GroupBox>
+                </ScrollViewer>
+            </TabItem>
+        <TabItem Header="Logs Settings" FontFamily="Microsoft Sans Serif" FontSize="11">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,0,0">
+                <GroupBox Header="Logging" FontFamily="Microsoft Sans Serif" Margin="10,8,20,0" FontSize="11" Height="auto">
                     <StackPanel>
-                        <TextBlock Text="Log Level:" FontFamily="Microsoft Sans Serif" FontSize="10" Margin="0,8,0,0"/>
-                        <ComboBox SelectedItem="{Binding LogLevel, Mode=TwoWay}" Margin="10,8,20,0">
+                        <TextBlock Text="Log Level:" FontFamily="Microsoft Sans Serif" FontSize="11" Margin="10,8,0,0"/>
+                        <ComboBox SelectedItem="{Binding LogLevel, Mode=TwoWay}" Margin="10,8,20,0" FontSize="11" Height="18">
                             <ComboBoxItem Content="Info"/>
                             <ComboBoxItem Content="Debug"/>
                             <ComboBoxItem Content="Warning"/>
                             <ComboBoxItem Content="Error"/>
                         </ComboBox>
 
-                        <TextBlock Text="Log File Path:" Margin="0,8,0,0" FontSize="10" />
+                        <TextBlock Text="Log File Path:" Margin="10,8,0,0" FontSize="11" Height="18"/>
                         <DockPanel>
-                            <TextBox Text="{Binding LogFilePath, Mode=TwoWay}" Width="260" Margin="10,8,0,0" FontSize="10"/>
-                            <Button Content="..." Width="30" Margin="4,0,0,0"
-              Click="BrowseLogFilePath_Click"/>
+                            <TextBox Text="{Binding LogFilePath, Mode=TwoWay}" Width="260" Margin="10,8,0,0" FontSize="11" Height="18"/>
+                            <Button Content="..." Width="30" Height="20" Margin="4,0,0,0" Click="BrowseLogFilePath_Click"/>
                         </DockPanel>
 
-                        <TextBlock Text="Log Channels:" Margin="0,8,0,0" FontFamily="Microsoft Sans Serif" FontSize="10"/>
+                        <TextBlock Text="Log Channels:" Margin="10,18,0,0" FontFamily="Microsoft Sans Serif" FontSize="11"/>
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Content="GUI" IsChecked="{Binding LogChannelGui, Mode=TwoWay}" Margin="10,8,12,0" FontSize="10"/>
-                            <CheckBox Content="File" IsChecked="{Binding LogChannelFile, Mode=TwoWay}" Margin="10,8,12,0" FontSize="10"/>
-                            <CheckBox Content="Events" IsChecked="{Binding LogChannelEvents, Mode=TwoWay}" FontSize="10" Margin="10,8,12,0"/>
+                            <CheckBox Content="GUI" IsChecked="{Binding LogChannelGui, Mode=TwoWay}" Margin="10,8,12,0" FontSize="11"/>
+                            <CheckBox Content="File" IsChecked="{Binding LogChannelFile, Mode=TwoWay}" Margin="10,8,12,0" FontSize="11"/>
+                            <CheckBox Content="Events" IsChecked="{Binding LogChannelEvents, Mode=TwoWay}" Margin="10,8,12,0" FontSize="11"/>
                         </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+            </ScrollViewer>
+        </TabItem>
+
+        <TabItem Header="Network" FontFamily="Microsoft Sans Serif" FontSize="11">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,0,0">
+                <GroupBox Header="Network" FontFamily="Microsoft Sans Serif" FontSize="11" Height="auto" Margin="10,8,20,0">
+                        <StackPanel>
 
                         <CheckBox Content="Record Network Statistics"
-              IsChecked="{Binding RecordNetworkStatistics, Mode=TwoWay}"
-              Margin="10,8,12,0" FontSize="10"/>
+                  IsChecked="{Binding RecordNetworkStatistics, Mode=TwoWay}"
+                  Margin="10,8,12,0" FontSize="11"/>
+                        <!-- Transfer Mode & Max Parallel Jobs row -->
+                        <Grid Margin="0,8,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                <TextBlock Text="Transfer Mode:" FontSize="11" Margin="10,0,0,0"/>
+                                <ComboBox SelectedItem="{Binding TransferMode, Mode=TwoWay}" Margin="10,4,0,0" FontSize="11" Height="18">
+                                    <ComboBoxItem Content="BITS TRANSFER"/>
+                                    <ComboBoxItem Content="Aria2c"/>
+                                    <ComboBoxItem Content="WGet"/>
+                                    <ComboBoxItem Content="Web Requests"/>
+                                </ComboBox>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="0,0,0,0">
+                                <TextBlock Text="Max Parallel Jobs:" FontSize="11" Margin="10,0,0,0"/>
+                                <ComboBox SelectedItem="{Binding MaxParallelJobs, Mode=TwoWay}" Margin="10,4,0,0" FontSize="11" Height="18">
+                                    <ComboBoxItem Content="64"/>
+                                    <ComboBoxItem Content="32"/>
+                                    <ComboBoxItem Content="16"/>
+                                    <ComboBoxItem Content="8"/>
+                                    <ComboBoxItem Content="1"/>
+                                </ComboBox>
+                            </StackPanel>
+                        </Grid>
 
-                        <TextBlock Text="Temporary Directory:" Margin="0,18,0,0" FontFamily="Microsoft Sans Serif" FontSize="10"/>
-                        <DockPanel>
-                            <TextBox Text="{Binding TemporaryDirectory, Mode=TwoWay}" Width="260" Margin="10,8,0,0"/>
-                            <Button Content="..." Width="30" Margin="4,0,0,0"
-              Click="BrowseTemporaryDirectory_Click"/>
-                        </DockPanel>
+                        <!-- Retry Interval & Retry Timeout row -->
+                        <Grid Margin="0,8,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                <TextBlock Text="Retry Interval (seconds):" FontSize="11" Margin="10,0,0,0"/>
+                                <TextBox Text="{Binding RetryInterval, Mode=TwoWay}" Margin="10,4,0,0" FontSize="11" Height="18"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="0,0,0,0">
+                                <TextBlock Text="Retry Timeout (seconds):" FontSize="11" Margin="10,0,0,0"/>
+                                <TextBox Text="{Binding RetryTimeout, Mode=TwoWay}" Margin="10,4,0,0" FontSize="11" Height="18"/>
+                            </StackPanel>
+                        </Grid>
 
-                        <TextBlock Text="Final Destination Directory:" Margin="0,8,0,0" FontFamily="Microsoft Sans Serif" FontSize="10"/>
-                        <DockPanel>
-                            <TextBox Text="{Binding FinalDestinationDirectory, Mode=TwoWay}"  Width="260" Margin="10,8,0,0"/>
-                            <Button Content="..." Width="30" Margin="4,0,0,0"
-              Click="BrowseFinalDestinationDirectory_Click"/>
-                        </DockPanel>
+                        <CheckBox Content="Proxy Authentication" IsChecked="{Binding ProxyAuthentication, Mode=TwoWay}" Margin="10,12,20,0" Height="16" RenderTransformOrigin="0.449,1.161"/>
 
-                        <CheckBox Content="Autorun Package Command"
-          IsChecked="{Binding AutorunPackageCommand, Mode=TwoWay}" 
-          Margin="0,18,0,0" FontSize="10"/>
+                            <TextBlock Text="Proxy Bypass:" Margin="10,8,0,0"/>
+                            <TextBox Text="{Binding ProxyBypass, Mode=TwoWay}" Margin="10,8,0,0"  Height="18" />
 
+                            <TextBlock Text="Proxy Credential:" Margin="10,8,0,0"/>
+                        <TextBox Text="{Binding ProxyCredential, Mode=TwoWay}"  Margin="10,8,0,0" Height="18"/>
 
-                        <CheckBox Content="Version Check on Start"
-              IsChecked="{Binding VersionCheckOnStart, Mode=TwoWay}"
-              Margin="0,8,0,0" FontSize="10"/>
+                            <CheckBox Content="Proxy Usage" IsChecked="{Binding ProxyUsage, Mode=TwoWay}" Margin="10,8,0,0"/>
 
-                        <CheckBox Content="Auto Update Enabled"
-              IsChecked="{Binding AutoUpdateEnabled, Mode=TwoWay}" FontSize="10" Margin="0,8,0,0"/>
-
-                        <CheckBox Content="Message of the Day Enabled"
-              IsChecked="{Binding MessageOfTheDayEnabled, Mode=TwoWay}" FontSize="10" Margin="0,8,0,0" />
-                    </StackPanel>
-                </GroupBox>
-            </ScrollViewer>
-        </TabItem>
-        <TabItem Header="Network" FontFamily="Microsoft Sans Serif" FontSize="11">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,0,0">
-                <GroupBox Header="Network" FontFamily="Microsoft Sans Serif" FontSize="11" Height="auto">
-                    <StackPanel>
-                        <TextBlock Text="Transfer Mode:" FontSize="10" Margin="0,8,0,0"/>
-                        <ComboBox SelectedItem="{Binding TransferMode, Mode=TwoWay}" Margin="10,8,0,0">
-                            <ComboBoxItem Content="BITS TRANSFER"/>
-                            <ComboBoxItem Content="Aria2c"/>
-                            <ComboBoxItem Content="WGet"/>
-                            <ComboBoxItem Content="Web Requests"/>
-                        </ComboBox>
-
-                        <TextBlock Text="Max Parallel Jobs:" Margin="0,8,0,0" FontSize="10"/>
-                        <ComboBox SelectedItem="{Binding MaxParallelJobs, Mode=TwoWay}" Margin="10,8,0,0">
-                            <ComboBoxItem Content="64"/>
-                            <ComboBoxItem Content="32"/>
-                            <ComboBoxItem Content="16"/>
-                            <ComboBoxItem Content="8"/>
-                            <ComboBoxItem Content="1"/>
-                        </ComboBox>
-
-                        <TextBlock Text="Priority:" Margin="0,8,0,0"/>
-                        <ComboBox SelectedItem="{Binding PriorityMode, Mode=TwoWay}" Margin="10,8,0,0">
-                            <ComboBoxItem Content="Foreground"/>
-                            <ComboBoxItem Content="High"/>
-                            <ComboBoxItem Content="Normal"/>
-                            <ComboBoxItem Content="Low"/>
-                        </ComboBox>
-                        <TextBlock Text="Retry Interval (seconds):" Margin="0,8,0,0"/>
-                        <TextBox Text="{Binding RetryInterval, Mode=TwoWay}" Margin="10,8,10,0" />
-
-                        <TextBlock Text="Retry Timeout (seconds):" Margin="0,8,0,0"/>
-                        <TextBox Text="{Binding RetryTimeout, Mode=TwoWay}" Margin="10,8,10,0" />
-
-                        <CheckBox Content="Proxy Authentication" IsChecked="{Binding ProxyAuthentication, Mode=TwoWay}" Margin="0,12,20,0" Height="16" RenderTransformOrigin="0.449,1.161"/>
-
-                        <TextBlock Text="Proxy Bypass:" Margin="0,8,0,0"/>
-                        <TextBox Text="{Binding ProxyBypass, Mode=TwoWay}" Margin="10,8,0,0" />
-
-                        <TextBlock Text="Proxy Credential:" Margin="0,8,0,0"/>
-                        <TextBox Text="{Binding ProxyCredential, Mode=TwoWay}"  Margin="10,8,0,0"/>
-
-                        <CheckBox Content="Proxy Usage" IsChecked="{Binding ProxyUsage, Mode=TwoWay}" Margin="0,8,0,0"/>
-
-                        <TextBlock Text="Proxy List:" Margin="0,8,0,0"/>
-                        <TextBox Text="{Binding ProxyList, Mode=TwoWay}" Margin="10,8,0,0" />
+                            <TextBlock Text="Proxy List:" Margin="10,8,0,0"/>
+                        <TextBox Text="{Binding ProxyList, Mode=TwoWay}" Margin="10,8,0,0" Height="18" />
 
 
-                    </StackPanel>
-                </GroupBox>
+                        </StackPanel>
+                    </GroupBox>
 
-            </ScrollViewer>
-        </TabItem>
+                </ScrollViewer>
+            </TabItem>
 
-    </TabControl>
+        </TabControl>
 
 
 
@@ -136,7 +160,7 @@
 
 
 
-</UserControl>
+    </UserControl>
 
 
 
