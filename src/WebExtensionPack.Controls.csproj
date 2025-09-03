@@ -2,7 +2,7 @@
 
 
   <PropertyGroup>
-    <TargetFramework>net4.7.2-windows</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <UseWPF>true</UseWPF>
     <EnableDefaultPageItems>false</EnableDefaultPageItems>
     <UseWindowsForms>true</UseWindowsForms>
