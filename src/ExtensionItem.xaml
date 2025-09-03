@@ -193,8 +193,8 @@
         </Grid>
         <TextBlock x:Name="ExtensionName"
                    Grid.Column="2"
-                   FontSize="13.333"
+                   FontSize="8"
                    Margin="2.915,4,10,3"
-                   Text="Extension" VerticalAlignment="Center"></TextBlock>
+                   Text="Extension" VerticalAlignment="Center" FontFamily="Microsoft Sans Serif"/>
     </Grid>
 </UserControl>
