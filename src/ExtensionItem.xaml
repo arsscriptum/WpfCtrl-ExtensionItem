@@ -4,6 +4,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:WebExtensionPack.Controls"
+    xmlns:gif="http://wpfanimatedgif.codeplex.com"
              mc:Ignorable="d"
              d:DesignHeight="25" Height="25"
              d:DesignWidth="400">
@@ -191,9 +192,30 @@
                 </EventTrigger>
             </Grid.Triggers>
         </Grid>
+        <!-- Place this Grid alongside GridPending, GridCloudDownload, etc. -->
+        <Grid x:Name="GridDecryption" Grid.Column="0" Width="25" Height="25" Visibility="Collapsed">
+            <Image x:Name="imgDecryptionGif" Width="24" Height="24" Stretch="Uniform"/>
+        </Grid>
+
+        <Grid x:Name="GridCloud" Grid.Column="0" Width="25" Height="25" Visibility="Collapsed">
+            <Image x:Name="imgCloudGif" Width="24" Height="24" Stretch="Uniform"/>
+        </Grid>
+
+        <Grid x:Name="GridLockAndKey" Grid.Column="0" Width="25" Height="25" Visibility="Collapsed">
+            <Image x:Name="imgLockAndKeyGif" Width="24" Height="24" Stretch="Uniform"/>
+        </Grid>
+        <Grid x:Name="GridLockSecurity" Grid.Column="0" Width="25" Height="25" Visibility="Collapsed">
+            <Image x:Name="imgLockSecurityGif" Width="24" Height="24" Stretch="Uniform"/>
+        </Grid>
+        <Grid x:Name="GridUnpack" Grid.Column="0" Width="25" Height="25" Visibility="Collapsed">
+            <Image x:Name="imgUnpackGif" Width="24" Height="24" Stretch="Uniform"/>
+        </Grid>
+        <Grid x:Name="GridScan" Grid.Column="0" Width="25" Height="25" Visibility="Collapsed">
+            <Image x:Name="imgScanGif" Width="24" Height="24" Stretch="Uniform"/>
+        </Grid>
         <TextBlock x:Name="ExtensionName"
                    Grid.Column="2"
-                   FontSize="8"
+                   FontSize="11"
                    Margin="2.915,4,10,3"
                    Text="Extension" VerticalAlignment="Center" FontFamily="Microsoft Sans Serif"/>
     </Grid>

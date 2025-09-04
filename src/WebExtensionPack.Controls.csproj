@@ -8,6 +8,33 @@
     <UseWindowsForms>true</UseWindowsForms>
 
   </PropertyGroup>
+
+
+  <ItemGroup>
+    <None Remove="res\cloud.gif" />
+    <None Remove="res\decryptaes.gif" />
+    <None Remove="res\lock.gif" />
+    <None Remove="res\lock32.gif" />
+    <None Remove="res\lockandkey.gif" />
+    <None Remove="res\locksecurity.gif" />
+    <None Remove="res\scan.gif" />
+    <None Remove="res\unpack.gif" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Resource Include="res\cloud.gif" />
+    <Resource Include="res\decryptaes.gif" />
+    <Resource Include="res\lockandkey.gif" />
+    <Resource Include="res\locksecurity.gif" />
+    <Resource Include="res\scan.gif" />
+    <Resource Include="res\unpack.gif" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
+  </ItemGroup>
 <ItemGroup>
   <Page Include="GridConfigPage.xaml" />
   <Page Include="ExtensionItem.xaml" />

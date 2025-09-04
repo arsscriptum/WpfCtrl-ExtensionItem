@@ -141,21 +141,31 @@
                             </StackPanel>
                         </Grid>
 
-                        <CheckBox Content="Proxy Authentication" IsChecked="{Binding ProxyAuthentication, Mode=TwoWay}" Margin="10,12,20,0" Height="16" RenderTransformOrigin="0.449,1.161" VerticalContentAlignment="Center"/>
+                    <CheckBox Content="Use Proxy (not implemented)" IsChecked="{Binding ProxyUsage, Mode=TwoWay}" Margin="10,8,20,0" VerticalContentAlignment="Center" IsEnabled="False" Foreground="Gray"/>
 
-                        <TextBlock Text="Proxy Bypass:" Margin="10,8,0,0"/>
-                        <TextBox Text="{Binding ProxyBypass, Mode=TwoWay}" Margin="10,8,20,0"  Height="18" />
+                    <!-- Retry Interval & Retry Timeout row -->
+                    <Grid Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                            <TextBlock Text="Proxy Authentication User" FontSize="11" Margin="10,0,0,0" Foreground="Gray"/>
+                            <TextBox Text="{Binding ProxyUSername, Mode=TwoWay}" Margin="10,8,20,0" FontSize="11" Height="18" IsEnabled="False"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="0,0,0,0">
+                            <TextBlock Text="Password" FontSize="11" Margin="10,0,20,0" Foreground="Gray"/>
+                            <TextBox Text="{Binding ProxyPassword, Mode=TwoWay}" Margin="10,8,20,0" FontSize="11" Height="18" IsEnabled="False"/>
+                        </StackPanel>
+                    </Grid>
 
-                        <TextBlock Text="Proxy Credential:" Margin="10,8,0,0"/>
-                        <TextBox Text="{Binding ProxyCredential, Mode=TwoWay}"  Margin="10,8,20,0" Height="18"/>
 
-                        <CheckBox Content="Proxy Usage" IsChecked="{Binding ProxyUsage, Mode=TwoWay}" Margin="10,8,20,0" VerticalContentAlignment="Center" />
-
-                        <TextBlock Text="Proxy List:" Margin="10,8,0,0" Height="20"/>
-                        <TextBox Text="{Binding ProxyList, Mode=TwoWay}" Margin="10,0,20,0" Height="18" />
-
-
+                    <StackPanel Grid.Column="1" Margin="0,0,0,0">
+                        <TextBlock Text="Proxy List:" Margin="10,8,0,0" Height="20" Foreground="Gray"/>
+                        <ListBox x:Name="listBox" Height="20" Width="331" IsEnabled="False"/>
                     </StackPanel>
+
+                </StackPanel>
  
 
             </ScrollViewer>
