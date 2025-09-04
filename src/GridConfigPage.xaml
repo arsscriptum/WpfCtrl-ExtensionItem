@@ -11,10 +11,10 @@
 
 
 
-    <TabControl Margin="12,0,31,10" Width="357">
+    <TabControl Margin="12,0,31,10" Width="357" SelectionChanged="TabControl_SelectionChanged">
         <TabItem Header="General" FontFamily="Microsoft Sans Serif" FontSize="11">
             <ScrollViewer VerticalScrollBarVisibility="Auto" Height="362" VerticalAlignment="Top" Margin="0,0,0,0">
-                <GroupBox Header="General Settings" FontFamily="Microsoft Sans Serif" FontSize="11" Height="356" Width="346" >
+            
                     <StackPanel>
 
 
@@ -58,14 +58,14 @@
     VerticalContentAlignment="Center"/>
 
                     </StackPanel>
-                </GroupBox>
+         
             </ScrollViewer>
         </TabItem>
         <TabItem Header="Logs Settings" FontFamily="Microsoft Sans Serif" FontSize="11">
             <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,0,0" VerticalAlignment="Top">
-                <GroupBox Header="Logging" FontFamily="Microsoft Sans Serif" Margin="0,0,0,0" FontSize="11" Height="360" Width="345">
+              
                     <StackPanel>
-                        <TextBlock Text="Log Level:" FontFamily="Microsoft Sans Serif" FontSize="11" Margin="10,8,0,0"/>
+                        <TextBlock Text="Log Level:" FontFamily="Microsoft Sans Serif" FontSize="11" Margin="10,18,0,0"/>
                         <ComboBox SelectedItem="{Binding LogLevel, Mode=TwoWay}" Margin="10,8,20,0" FontSize="11" Height="18">
                             <ComboBoxItem Content="Info"/>
                             <ComboBoxItem Content="Debug"/>
@@ -86,18 +86,18 @@
                             <CheckBox Content="Events" IsChecked="{Binding LogChannelEvents, Mode=TwoWay}" Margin="10,8,12,0" FontSize="11" VerticalContentAlignment="Center"/>
                         </StackPanel>
                     </StackPanel>
-                </GroupBox>
+
             </ScrollViewer>
         </TabItem>
 
         <TabItem Header="Network" FontFamily="Microsoft Sans Serif" FontSize="11">
             <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,0,0" VerticalAlignment="Top">
-                <GroupBox Header="Network" FontFamily="Microsoft Sans Serif" FontSize="11" Height="360" Width="346" >
-                    <StackPanel Margin="0,0,0,-19">
 
-                        <CheckBox Content="Record Network Statistics"
+                <StackPanel>
+
+                    <CheckBox Content="Record Network Statistics"
                   IsChecked="{Binding RecordNetworkStatistics, Mode=TwoWay}"
-                  Margin="10,8,12,0" FontSize="11" VerticalContentAlignment="Center"/>
+                  Margin="10,18,12,0" FontSize="11" VerticalContentAlignment="Center"/>
                         <!-- Transfer Mode & Max Parallel Jobs row -->
                         <Grid Margin="0,8,0,0">
                             <Grid.ColumnDefinitions>
@@ -105,8 +105,8 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Margin="0,0,10,0">
-                                <TextBlock Text="Transfer Mode:" FontSize="11" Margin="10,0,0,0"/>
-                                <ComboBox SelectedItem="{Binding TransferMode, Mode=TwoWay}" Margin="10,4,0,0" FontSize="11" Height="18">
+                                <TextBlock Text="Transfer Mode:" FontSize="11" Margin="10,8,0,0"/>
+                                <ComboBox SelectedItem="{Binding TransferMode, Mode=TwoWay}" Margin="10,8,20,0" FontSize="11" Height="18">
                                     <ComboBoxItem Content="BITS TRANSFER"/>
                                     <ComboBoxItem Content="Aria2c"/>
                                     <ComboBoxItem Content="WGet"/>
@@ -114,8 +114,8 @@
                                 </ComboBox>
                             </StackPanel>
                             <StackPanel Grid.Column="1" Margin="0,0,0,0">
-                                <TextBlock Text="Max Parallel Jobs:" FontSize="11" Margin="10,0,0,0"/>
-                                <ComboBox SelectedItem="{Binding MaxParallelJobs, Mode=TwoWay}" Margin="10,4,0,0" FontSize="11" Height="18">
+                                <TextBlock Text="Max Parallel Jobs:" FontSize="11" Margin="10,8,20,0"/>
+                                <ComboBox SelectedItem="{Binding MaxParallelJobs, Mode=TwoWay}" Margin="10,8,20,0" FontSize="11" Height="18">
                                     <ComboBoxItem Content="64"/>
                                     <ComboBoxItem Content="32"/>
                                     <ComboBoxItem Content="16"/>
@@ -133,30 +133,30 @@
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Margin="0,0,10,0">
                                 <TextBlock Text="Retry Interval (seconds):" FontSize="11" Margin="10,0,0,0"/>
-                                <TextBox Text="{Binding RetryInterval, Mode=TwoWay}" Margin="10,4,0,0" FontSize="11" Height="18"/>
+                                <TextBox Text="{Binding RetryInterval, Mode=TwoWay}" Margin="10,8,20,0" FontSize="11" Height="18"/>
                             </StackPanel>
                             <StackPanel Grid.Column="1" Margin="0,0,0,0">
-                                <TextBlock Text="Retry Timeout (seconds):" FontSize="11" Margin="10,0,0,0"/>
-                                <TextBox Text="{Binding RetryTimeout, Mode=TwoWay}" Margin="10,4,0,0" FontSize="11" Height="18"/>
+                                <TextBlock Text="Retry Timeout (seconds):" FontSize="11" Margin="10,0,20,0"/>
+                                <TextBox Text="{Binding RetryTimeout, Mode=TwoWay}" Margin="10,8,20,0" FontSize="11" Height="18"/>
                             </StackPanel>
                         </Grid>
 
                         <CheckBox Content="Proxy Authentication" IsChecked="{Binding ProxyAuthentication, Mode=TwoWay}" Margin="10,12,20,0" Height="16" RenderTransformOrigin="0.449,1.161" VerticalContentAlignment="Center"/>
 
                         <TextBlock Text="Proxy Bypass:" Margin="10,8,0,0"/>
-                        <TextBox Text="{Binding ProxyBypass, Mode=TwoWay}" Margin="10,8,0,0"  Height="18" />
+                        <TextBox Text="{Binding ProxyBypass, Mode=TwoWay}" Margin="10,8,20,0"  Height="18" />
 
                         <TextBlock Text="Proxy Credential:" Margin="10,8,0,0"/>
-                        <TextBox Text="{Binding ProxyCredential, Mode=TwoWay}"  Margin="10,8,0,0" Height="18"/>
+                        <TextBox Text="{Binding ProxyCredential, Mode=TwoWay}"  Margin="10,8,20,0" Height="18"/>
 
-                        <CheckBox Content="Proxy Usage" IsChecked="{Binding ProxyUsage, Mode=TwoWay}" Margin="10,8,0,0" VerticalContentAlignment="Center" />
+                        <CheckBox Content="Proxy Usage" IsChecked="{Binding ProxyUsage, Mode=TwoWay}" Margin="10,8,20,0" VerticalContentAlignment="Center" />
 
-                        <TextBlock Text="Proxy List:" Margin="10,8,0,0"/>
-                        <TextBox Text="{Binding ProxyList, Mode=TwoWay}" Margin="10,8,0,0" Height="18" />
+                        <TextBlock Text="Proxy List:" Margin="10,8,0,0" Height="20"/>
+                        <TextBox Text="{Binding ProxyList, Mode=TwoWay}" Margin="10,0,20,0" Height="18" />
 
 
                     </StackPanel>
-                </GroupBox>
+ 
 
             </ScrollViewer>
         </TabItem>

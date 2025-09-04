@@ -77,5 +77,10 @@ private void BrowseFinalDestinationDirectory_Click(object sender, RoutedEventArg
                 if (bindingExpression != null) bindingExpression.UpdateSource();
             }*/
         }
+
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }
