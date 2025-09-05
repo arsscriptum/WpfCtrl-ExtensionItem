@@ -1,17 +1,45 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <UseWPF>true</UseWPF>
     <EnableDefaultPageItems>false</EnableDefaultPageItems>
     <UseWindowsForms>true</UseWindowsForms>
-
+    <!-- Set default, can be overridden from command line -->
+    <USE_ANIMATED_GIFS>false</USE_ANIMATED_GIFS>
   </PropertyGroup>
-<ItemGroup>
-  <Page Include="GridConfigPage.xaml" />
-  <Page Include="ExtensionItem.xaml" />
-</ItemGroup>
-
-
+  <ItemGroup>
+    <None Remove="res\cloud.gif" />
+    <None Remove="res\decryptaes.gif" />
+    <None Remove="res\lock.gif" />
+    <None Remove="res\lock32.gif" />
+    <None Remove="res\lockandkey.gif" />
+    <None Remove="res\locksecurity.gif" />
+    <None Remove="res\scan.gif" />
+    <None Remove="res\unpack.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\cloud.gif" />
+    <Resource Include="res\decryptaes.gif" />
+    <Resource Include="res\lockandkey.gif" />
+    <Resource Include="res\locksecurity.gif" />
+    <Resource Include="res\scan.gif" />
+    <Resource Include="res\unpack.gif" />
+  </ItemGroup>
+  <!-- Conditionally include WpfAnimatedGif -->
+  <ItemGroup Condition="'$(USE_ANIMATED_GIFS)' == 'true'">
+    <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
+  </ItemGroup>
+  <!-- Conditionally include the correct XAML file -->
+  <ItemGroup Condition="'$(USE_ANIMATED_GIFS)' == 'true'">
+    <Page Include="ExtensionItemAnimatedGifs.xaml" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(USE_ANIMATED_GIFS)' != 'true'">
+    <Page Include="ExtensionItemSimple.xaml" />
+  </ItemGroup>
+  <!-- Other XAML files always included -->
+  <ItemGroup>
+    <Page Include="GridConfigPage.xaml" />
+  </ItemGroup>
 </Project>
+
+
