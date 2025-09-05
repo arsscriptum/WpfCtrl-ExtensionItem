@@ -25,7 +25,7 @@ class BuildRequest {
     [bool]$RedirectStdOut
     [bool]$RedirectStdErr
     [BuildVerbosity]$LogLevel
-    [System.Collections.Generic.List[System.Collections.Generic.KeyValuePair[string,string]]]$MsBuildProperties
+    [System.Collections.Generic.List[System.Collections.Generic.KeyValuePair[string,string]]]$MsBuildProperties = [System.Collections.Generic.List[System.Collections.Generic.KeyValuePair[string,string]]]::new()
     [string]$Owner
     [uint64]$Created
     [uint64]$Executed

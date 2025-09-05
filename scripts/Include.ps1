@@ -16,12 +16,29 @@ function Import-BuildSystemScripts {
 }
 
 
+function Out-MsBuildProperties {
+[CmdletBinding()]
+param(
+    [Parameter(ValueFromPipeline = $true, Mandatory = $true, HelpMessage = "MsBuildProperties")]
+    [System.Collections.Generic.List[System.Collections.Generic.KeyValuePair[string,string]]]$MsBuildProperties
+)
+    process {
+        if (-not $MsBuildProperties -or $MsBuildProperties.Count -eq 0) {
+            Write-Host "No MsBuildProperties"
+        } else {
+            Write-Host "MsBuildProperties"
+            foreach ($kv in $MsBuildProperties) {
+                Write-Host "  $($kv.Key) => $($kv.Value)"
+            }
+        }
+    }
+}
 
 
 function Find-LoadedModule {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory=$true, HelpMessage="DLL or module name (e.g., WebExtensionPack.Controls.dll)")]
+        [Parameter(Mandatory=$true)]
         [string]$Module,
         [Parameter(Mandatory=$false)]
         [string]$ProcessName,
@@ -88,7 +105,7 @@ function Find-LoadedModule {
 function Get-ProcessUsingModule {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory=$true, HelpMessage="DLL or module name (e.g., WebExtensionPack.Controls.dll)")]
+        [Parameter(Mandatory=$true)]
         [string]$Module,
         [Parameter(Mandatory=$false)]
         [switch]$Kill
@@ -186,13 +203,8 @@ function Invoke-BuildRequest {
     Write-Host "Version: $($BuildRequest.Version)"
     Write-Host "Log Level: $($BuildRequest.LogLevel)"
     Write-Host "Compilation Output Path: $OutPath" -f DarkCyan
-    $MsBuildPropertiesCount = $BuildRequest.MsBuildProperties.Count
-    if ($MsBuildPropertiesCount) {
-        Write-Host "MsBuild Properties"
-        Write-Host " - $($BuildRequest.MsBuildProperties | ForEach-Object { "$($_.Key)=$($_.Value)" } -join '; ')"
-    }
-
-
+    $BuildRequest.MsBuildProperties | Out-MsBuildProperties
+   
     # Clean output path if requested
     if ($Clean -and $OutPath -and (Test-Path $OutPath)) {
         Write-Host "Cleaning output path: $($OutPath)" -ForegroundColor Yellow
