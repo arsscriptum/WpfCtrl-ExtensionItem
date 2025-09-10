@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace WebExtensionPack.Controls
 {
-  // Special guid to tell it that this is a custom Options dialog page, not the built-in grid dialog page.
+    // Special guid to tell it that this is a custom Options dialog page, not the built-in grid dialog page.
     public class GridConfigSettings : INotifyPropertyChanged
     {
         #region Notify Property Changed
@@ -41,26 +41,26 @@ namespace WebExtensionPack.Controls
             set { _logFilePath = value; NotifyPropertyChanged(nameof(LogFilePath)); }
         }
 
-private bool _logChannelGui;
-public bool LogChannelGui
-{
-    get => _logChannelGui;
-    set { _logChannelGui = value; NotifyPropertyChanged(nameof(LogChannelGui)); }
-}
+        private bool _logChannelGui;
+        public bool LogChannelGui
+        {
+            get => _logChannelGui;
+            set { _logChannelGui = value; NotifyPropertyChanged(nameof(LogChannelGui)); }
+        }
 
-private bool _logChannelFile;
-public bool LogChannelFile
-{
-    get => _logChannelFile;
-    set { _logChannelFile = value; NotifyPropertyChanged(nameof(LogChannelFile)); }
-}
+        private bool _logChannelFile;
+        public bool LogChannelFile
+        {
+            get => _logChannelFile;
+            set { _logChannelFile = value; NotifyPropertyChanged(nameof(LogChannelFile)); }
+        }
 
-private bool _logChannelEvents;
-public bool LogChannelEvents
-{
-    get => _logChannelEvents;
-    set { _logChannelEvents = value; NotifyPropertyChanged(nameof(LogChannelEvents)); }
-}
+        private bool _logChannelEvents;
+        public bool LogChannelEvents
+        {
+            get => _logChannelEvents;
+            set { _logChannelEvents = value; NotifyPropertyChanged(nameof(LogChannelEvents)); }
+        }
 
         private bool _recordNetworkStatistics;
         public bool RecordNetworkStatistics
@@ -83,12 +83,12 @@ public bool LogChannelEvents
             set { _finalDestinationDirectory = value; NotifyPropertyChanged(nameof(FinalDestinationDirectory)); }
         }
 
-   private bool _autorunPackageCommand;
-public bool AutorunPackageCommand
-{
-    get => _autorunPackageCommand;
-    set { _autorunPackageCommand = value; NotifyPropertyChanged(nameof(AutorunPackageCommand)); }
-}
+        private bool _autorunPackageCommand;
+        public bool AutorunPackageCommand
+        {
+            get => _autorunPackageCommand;
+            set { _autorunPackageCommand = value; NotifyPropertyChanged(nameof(AutorunPackageCommand)); }
+        }
 
 
         private bool _versionCheckOnStart;
@@ -133,150 +133,150 @@ public bool AutorunPackageCommand
 
         #endregion
 
-// Transfer Mode
-private string _transferMode = "BITS TRANSFER";
-public string TransferMode
-{
-    get => _transferMode;
-    set { _transferMode = value; NotifyPropertyChanged(nameof(TransferMode)); }
-}
+        // Transfer Mode
+        private string _transferMode = "BITS TRANSFER";
+        public string TransferMode
+        {
+            get => _transferMode;
+            set { _transferMode = value; NotifyPropertyChanged(nameof(TransferMode)); }
+        }
 
-// Max Parallel Jobs
-private int _maxParallelJobs;
-public int MaxParallelJobs
-{
-    get => _maxParallelJobs;
-    set { _maxParallelJobs = value; NotifyPropertyChanged(nameof(MaxParallelJobs)); }
-}
+        // Max Parallel Jobs
+        private int _maxParallelJobs;
+        public int MaxParallelJobs
+        {
+            get => _maxParallelJobs;
+            set { _maxParallelJobs = value; NotifyPropertyChanged(nameof(MaxParallelJobs)); }
+        }
 
-// Priority
-private int _priority;
-public int Priority
-{
-    get => _priority;
-    set { _priority = value; NotifyPropertyChanged(nameof(Priority)); }
-}
+        // Priority
+        private int _priority;
+        public int Priority
+        {
+            get => _priority;
+            set { _priority = value; NotifyPropertyChanged(nameof(Priority)); }
+        }
 
-// RetryInterval (seconds)
-private int _retryInterval;
-public int RetryInterval
-{
-    get => _retryInterval;
-    set { _retryInterval = value; NotifyPropertyChanged(nameof(RetryInterval)); }
-}
+        // RetryInterval (seconds)
+        private int _retryInterval;
+        public int RetryInterval
+        {
+            get => _retryInterval;
+            set { _retryInterval = value; NotifyPropertyChanged(nameof(RetryInterval)); }
+        }
 
-// RetryTimeout (seconds)
-private int _retryTimeout;
-public int RetryTimeout
-{
-    get => _retryTimeout;
-    set { _retryTimeout = value; NotifyPropertyChanged(nameof(RetryTimeout)); }
-}
+        // RetryTimeout (seconds)
+        private int _retryTimeout;
+        public int RetryTimeout
+        {
+            get => _retryTimeout;
+            set { _retryTimeout = value; NotifyPropertyChanged(nameof(RetryTimeout)); }
+        }
 
-// MaxDownloadTime (seconds)
-private int _maxDownloadTime;
-public int MaxDownloadTime
-{
-    get => _maxDownloadTime;
-    set { _maxDownloadTime = value; NotifyPropertyChanged(nameof(MaxDownloadTime)); }
-}
+        // MaxDownloadTime (seconds)
+        private int _maxDownloadTime;
+        public int MaxDownloadTime
+        {
+            get => _maxDownloadTime;
+            set { _maxDownloadTime = value; NotifyPropertyChanged(nameof(MaxDownloadTime)); }
+        }
 
-// ProxyAuthentication
-private bool _proxyAuthentication;
-public bool ProxyAuthentication
-{
-    get => _proxyAuthentication;
-    set { _proxyAuthentication = value; NotifyPropertyChanged(nameof(ProxyAuthentication)); }
-}
+        // ProxyAuthentication
+        private bool _proxyAuthentication;
+        public bool ProxyAuthentication
+        {
+            get => _proxyAuthentication;
+            set { _proxyAuthentication = value; NotifyPropertyChanged(nameof(ProxyAuthentication)); }
+        }
 
-// ProxyBypass
-private string _proxyBypass;
-public string ProxyBypass
-{
-    get => _proxyBypass;
-    set { _proxyBypass = value; NotifyPropertyChanged(nameof(ProxyBypass)); }
-}
+        // ProxyBypass
+        private string _proxyBypass;
+        public string ProxyBypass
+        {
+            get => _proxyBypass;
+            set { _proxyBypass = value; NotifyPropertyChanged(nameof(ProxyBypass)); }
+        }
 
-// ProxyCredential
-private string _proxyCredential;
-public string ProxyCredential
-{
-    get => _proxyCredential;
-    set { _proxyCredential = value; NotifyPropertyChanged(nameof(ProxyCredential)); }
-}
+        // ProxyCredential
+        private string _proxyCredential;
+        public string ProxyCredential
+        {
+            get => _proxyCredential;
+            set { _proxyCredential = value; NotifyPropertyChanged(nameof(ProxyCredential)); }
+        }
 
-// ProxyUsage
-private bool _proxyUsage;
-public bool ProxyUsage
-{
-    get => _proxyUsage;
-    set { _proxyUsage = value; NotifyPropertyChanged(nameof(ProxyUsage)); }
-}
+        // ProxyUsage
+        private bool _proxyUsage;
+        public bool ProxyUsage
+        {
+            get => _proxyUsage;
+            set { _proxyUsage = value; NotifyPropertyChanged(nameof(ProxyUsage)); }
+        }
 
-// ProxyList
-private string _proxyList;
-public string ProxyList
-{
-    get => _proxyList;
-    set { _proxyList = value; NotifyPropertyChanged(nameof(ProxyList)); }
-}
+        // ProxyList
+        private string _proxyList;
+        public string ProxyList
+        {
+            get => _proxyList;
+            set { _proxyList = value; NotifyPropertyChanged(nameof(ProxyList)); }
+        }
 
-// NotifyFlags
-private string _notifyFlags = "None";
-public string NotifyFlags
-{
-    get => _notifyFlags;
-    set { _notifyFlags = value; NotifyPropertyChanged(nameof(NotifyFlags)); }
-}
+        // NotifyFlags
+        private string _notifyFlags = "None";
+        public string NotifyFlags
+        {
+            get => _notifyFlags;
+            set { _notifyFlags = value; NotifyPropertyChanged(nameof(NotifyFlags)); }
+        }
 
-// NotifyCmdLine
-private string _notifyCmdLine;
-public string NotifyCmdLine
-{
-    get => _notifyCmdLine;
-    set { _notifyCmdLine = value; NotifyPropertyChanged(nameof(NotifyCmdLine)); }
-}
+        // NotifyCmdLine
+        private string _notifyCmdLine;
+        public string NotifyCmdLine
+        {
+            get => _notifyCmdLine;
+            set { _notifyCmdLine = value; NotifyPropertyChanged(nameof(NotifyCmdLine)); }
+        }
 
 
 
-// --- Stats ---
-private bool _generateErrorReportOnError;
-public bool GenerateErrorReportOnError
-{
-    get => _generateErrorReportOnError;
-    set { _generateErrorReportOnError = value; NotifyPropertyChanged(nameof(GenerateErrorReportOnError)); }
-}
+        // --- Stats ---
+        private bool _generateErrorReportOnError;
+        public bool GenerateErrorReportOnError
+        {
+            get => _generateErrorReportOnError;
+            set { _generateErrorReportOnError = value; NotifyPropertyChanged(nameof(GenerateErrorReportOnError)); }
+        }
 
-private bool _gatherSystemInformation;
-public bool GatherSystemInformation
-{
-    get => _gatherSystemInformation;
-    set { _gatherSystemInformation = value; NotifyPropertyChanged(nameof(GatherSystemInformation)); }
-}
+        private bool _gatherSystemInformation;
+        public bool GatherSystemInformation
+        {
+            get => _gatherSystemInformation;
+            set { _gatherSystemInformation = value; NotifyPropertyChanged(nameof(GatherSystemInformation)); }
+        }
 
-// --- License ---
-private string _licenseUsername;
-public string LicenseUsername
-{
-    get => _licenseUsername;
-    set { _licenseUsername = value; NotifyPropertyChanged(nameof(LicenseUsername)); }
-}
+        // --- License ---
+        private string _licenseUsername;
+        public string LicenseUsername
+        {
+            get => _licenseUsername;
+            set { _licenseUsername = value; NotifyPropertyChanged(nameof(LicenseUsername)); }
+        }
 
-private string _licenseCompanyName;
-public string LicenseCompanyName
-{
-    get => _licenseCompanyName;
-    set { _licenseCompanyName = value; NotifyPropertyChanged(nameof(LicenseCompanyName)); }
-}
+        private string _licenseCompanyName;
+        public string LicenseCompanyName
+        {
+            get => _licenseCompanyName;
+            set { _licenseCompanyName = value; NotifyPropertyChanged(nameof(LicenseCompanyName)); }
+        }
 
-private string _licenseKey;
-public string LicenseKey
-{
-    get => _licenseKey;
-    set { _licenseKey = value; NotifyPropertyChanged(nameof(LicenseKey)); }
-}
+        private string _licenseKey;
+        public string LicenseKey
+        {
+            get => _licenseKey;
+            set { _licenseKey = value; NotifyPropertyChanged(nameof(LicenseKey)); }
+        }
 
-        
+
     }
 }
 

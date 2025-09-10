@@ -13,6 +13,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Forms; // WinForms dialog, add reference if needed
+using System.IO;
+using System.Text.Json;
+
 namespace WebExtensionPack.Controls
 {
     /// <summary>
@@ -26,33 +29,33 @@ namespace WebExtensionPack.Controls
         private GridConfigSettings _settings = null;
 
 
-private void BrowseLogFilePath_Click(object sender, RoutedEventArgs e)
-{
-    var dialog = new SaveFileDialog();
-    dialog.Filter = "Log files (*.log)|*.log|All files (*.*)|*.*";
-    if (dialog.ShowDialog() == DialogResult.OK)
-        _settings.LogFilePath = dialog.FileName;
-}
+        private void BrowseLogFilePath_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new SaveFileDialog();
+            dialog.Filter = "Log files (*.log)|*.log|All files (*.*)|*.*";
+            if (dialog.ShowDialog() == DialogResult.OK)
+                _settings.LogFilePath = dialog.FileName;
+        }
 
-private void BrowseTemporaryDirectory_Click(object sender, RoutedEventArgs e)
-{
-    using (var dialog = new FolderBrowserDialog())
-    {
-        dialog.Description = "Select Temporary Directory";
-        if (dialog.ShowDialog() == DialogResult.OK)
-            _settings.TemporaryDirectory = dialog.SelectedPath;
-    }
-}
+        private void BrowseTemporaryDirectory_Click(object sender, RoutedEventArgs e)
+        {
+            using (var dialog = new FolderBrowserDialog())
+            {
+                dialog.Description = "Select Temporary Directory";
+                if (dialog.ShowDialog() == DialogResult.OK)
+                    _settings.TemporaryDirectory = dialog.SelectedPath;
+            }
+        }
 
-private void BrowseFinalDestinationDirectory_Click(object sender, RoutedEventArgs e)
-{
-    using (var dialog = new FolderBrowserDialog())
-    {
-        dialog.Description = "Select Final Destination Directory";
-        if (dialog.ShowDialog() == DialogResult.OK)
-            _settings.FinalDestinationDirectory = dialog.SelectedPath;
-    }
-}
+        private void BrowseFinalDestinationDirectory_Click(object sender, RoutedEventArgs e)
+        {
+            using (var dialog = new FolderBrowserDialog())
+            {
+                dialog.Description = "Select Final Destination Directory";
+                if (dialog.ShowDialog() == DialogResult.OK)
+                    _settings.FinalDestinationDirectory = dialog.SelectedPath;
+            }
+        }
         public GridConfigPagePageControl(GridConfigSettings settings)
         {
             InitializeComponent();
@@ -63,7 +66,7 @@ private void BrowseFinalDestinationDirectory_Click(object sender, RoutedEventArg
 
         private void btnRestoreDefaultSettings_Click(object sender, RoutedEventArgs e)
         {
-           // _settings.ResetSettings();
+            // _settings.ResetSettings();
         }
 
         private void UserControl_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
@@ -71,11 +74,11 @@ private void BrowseFinalDestinationDirectory_Click(object sender, RoutedEventArg
             // Find all TextBoxes in this control force the Text bindings to fire to make sure all changes have been saved.
             // This is required because if the user changes some text, then clicks on the Options Window's OK button, it closes
             // the window before the TextBox's Text bindings fire, so the new value will not be saved.
-           /* foreach (var textBox in DiffAllFilesHelper.FindVisualChildren<TextBox>(sender as UserControl))
-            {
-                var bindingExpression = textBox.GetBindingExpression(TextBox.TextProperty);
-                if (bindingExpression != null) bindingExpression.UpdateSource();
-            }*/
+            /* foreach (var textBox in DiffAllFilesHelper.FindVisualChildren<TextBox>(sender as UserControl))
+             {
+                 var bindingExpression = textBox.GetBindingExpression(TextBox.TextProperty);
+                 if (bindingExpression != null) bindingExpression.UpdateSource();
+             }*/
         }
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -83,4 +86,23 @@ private void BrowseFinalDestinationDirectory_Click(object sender, RoutedEventArg
 
         }
     }
+
+    public static class GridConfigSettingsPersistence
+    {
+        public static void Save(GridConfigSettings settings, string filePath)
+        {
+            var json = System.Text.Json.JsonSerializer.Serialize(settings, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(filePath, json);
+        }
+
+        public static GridConfigSettings Load(string filePath)
+        {
+            if (!File.Exists(filePath))
+                return new GridConfigSettings(); // return default
+
+            var json = File.ReadAllText(filePath);
+            return JsonSerializer.Deserialize<GridConfigSettings>(json) ?? new GridConfigSettings();
+        }
+    }
+
 }

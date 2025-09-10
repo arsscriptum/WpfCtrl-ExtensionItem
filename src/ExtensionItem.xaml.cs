@@ -10,11 +10,27 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+#if USE_ANIMATED_GIFS
 using WpfAnimatedGif;
-
+#endif
 
 namespace WebExtensionPack.Controls
 {
+    #if USE_ANIMATED_GIFS
+    private string urlGifCloud = "pack://application:,,,/WebExtensionPack.Controls;component/res/cloud.gif";
+    private string urlGifDecryptAes = "pack://application:,,,/WebExtensionPack.Controls;component/res/decryptaes.gif";
+    private string urlGifLockAndKey = "pack://application:,,,/WebExtensionPack.Controls;component/res/lockandkey.gif";
+    private string urlGifLockSecurity = "pack://application:,,,/WebExtensionPack.Controls;component/res/locksecurity.gif";
+    private string urlGifScan = "pack://application:,,,/WebExtensionPack.Controls;component/res/scan.gif";
+    private string urlGifUnpack = "pack://application:,,,/WebExtensionPack.Controls;component/res/unpack.gif";
+    private BitmapImage gifCloud;
+    private BitmapImage gifDecryptAes;
+    private BitmapImage gifLockAndKey;
+    private BitmapImage gifLockSecurity;
+    private BitmapImage gifScan;
+    private BitmapImage gifUnpack;
+    #endif
+
     public enum ExtensionStatus
     {
         None,
@@ -40,6 +56,18 @@ namespace WebExtensionPack.Controls
         {
             InitializeComponent();
             Status = ExtensionStatus.Pending;
+            #if USE_ANIMATED_GIFS
+            InitializeAnimatedGifs();
+            #endif
+
+        }
+
+
+ 
+        
+        public void InitializeAnimatedGifs()
+        {
+            #if USE_ANIMATED_GIFS
             var urlCloud = new Uri(urlGifCloud, UriKind.Absolute);
             var urlDecryptAes = new Uri(urlGifDecryptAes, UriKind.Absolute);
             var urlLockAndKey = new Uri(urlGifLockAndKey, UriKind.Absolute);
@@ -60,22 +88,10 @@ namespace WebExtensionPack.Controls
             ImageBehavior.SetAnimatedSource(imgUnpackGif, gifUnpack);
             ImageBehavior.SetAnimatedSource(imgLockSecurityGif, gifLockSecurity);
             ImageBehavior.SetAnimatedSource(imgLockAndKeyGif, gifLockAndKey);
-
+            #endif
         }
 
 
-        private string urlGifCloud = "pack://application:,,,/WebExtensionPack.Controls;component/res/cloud.gif";
-        private string urlGifDecryptAes = "pack://application:,,,/WebExtensionPack.Controls;component/res/decryptaes.gif";
-        private string urlGifLockAndKey = "pack://application:,,,/WebExtensionPack.Controls;component/res/lockandkey.gif";
-        private string urlGifLockSecurity = "pack://application:,,,/WebExtensionPack.Controls;component/res/locksecurity.gif";
-        private string urlGifScan = "pack://application:,,,/WebExtensionPack.Controls;component/res/scan.gif";
-        private string urlGifUnpack = "pack://application:,,,/WebExtensionPack.Controls;component/res/unpack.gif";
-        private BitmapImage gifCloud;
-        private BitmapImage gifDecryptAes;
-        private BitmapImage gifLockAndKey;
-        private BitmapImage gifLockSecurity;
-        private BitmapImage gifScan;
-        private BitmapImage gifUnpack;
 
         public string ExtensionGuid { get; }
         private ExtensionStatus _status;
