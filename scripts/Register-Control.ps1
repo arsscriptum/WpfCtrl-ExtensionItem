@@ -10,34 +10,6 @@
 
 
 
-function Get-DeployedAssembliesPath {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
-    process {
-        $DeployPath = Read-WpfCtrlSettings | Select -ExpandProperty 'deploy_assemblies_path'
-        return $DeployPath
-    }
-}
-
-
-function Get-TempObjectsPath {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
-
-    $BinariesPath = Join-Path (Get-SourcesPath) "obj"
-    return $BinariesPath
-}
-
-
-function Get-DeployedRootPath {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
-    process {
-        $DeployedRootPath = Read-WpfCtrlSettings | Select -ExpandProperty 'deployed_root_path'
-        return $DeployedRootPath
-    }
-}
-
 function Register-ExtensionControlDll {
     [CmdletBinding(SupportsShouldProcess)]
     param(

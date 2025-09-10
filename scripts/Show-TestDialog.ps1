@@ -37,27 +37,14 @@ function Show-ExtensionItemDialog {
     $button.Margin = [System.Windows.Thickness]::new(0, 10, 0, 0)
     [System.Windows.Controls.Grid]::SetRow($button, 1)
     $grid.Children.Add($button)
-    $Script:isBold = $False
+
     # Cycling logic
     $states = [WebExtensionPack.Controls.ExtensionStatus]::GetValues([WebExtensionPack.Controls.ExtensionStatus])
     $i = 0
-    $Script:j = 0
-    $Script:colors = @('black','red','darkgreen')
     $button.Add_Click({
             $ctrl.SetNextExtensionStatus();
-             $Script:isBold = !$Script:isBold
-            
-            if($Script:j -gt 2){
-                $Script:j = 0
-            }else{
-                $Script:j++
-            }
             $currStatus = $ctrl.GetExtensionStatusString()
-            $ctrl.SetLabelBold($Script:isBold)
-            $ctrl.SetLabelColor($Script:colors[$Script:j])
-            $button.Content = "State: $currStatus Bold $Script:isBold color $($Script:colors[$Script:j])"
-           
-
+            $button.Content = "State: $currStatus (click to cycle)"
         })
     $button.Content = "State: Pending (click to cycle)"
 

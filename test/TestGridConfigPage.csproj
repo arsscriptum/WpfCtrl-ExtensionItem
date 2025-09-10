@@ -1,9 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
-
-    
+    <WebExtensionPackDir>$(MSBuildProjectDirectory)\..\src\bin\Release</WebExtensionPackDir>
     <OutputType>WinExe</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <NoWarn>CA1416</NoWarn>
@@ -11,11 +9,9 @@
     <UseWPF>true</UseWPF>
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
-
   <ItemGroup>
     <Reference Include="WebExtensionPack.Controls">
-      <HintPath>..\src\bin\Release\net472\WebExtensionPack.Controls.dll</HintPath>
+      <HintPath>$(WebExtensionPackDir)\WebExtensionPack.Controls.dll</HintPath>
     </Reference>
   </ItemGroup>
-
 </Project>
