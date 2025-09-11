@@ -1,4 +1,4 @@
-
+﻿
 
 function Import-BuildSystemScripts {
     [CmdletBinding(SupportsShouldProcess)]
@@ -16,85 +16,66 @@ function Import-BuildSystemScripts {
 }
 
 
-function Out-MsBuildProperties {
-[CmdletBinding()]
-param(
-    [Parameter(ValueFromPipeline = $true, Mandatory = $true, HelpMessage = "MsBuildProperties")]
-    [System.Collections.Generic.List[System.Collections.Generic.KeyValuePair[string,string]]]$MsBuildProperties
-)
-    process {
-        if (-not $MsBuildProperties -or $MsBuildProperties.Count -eq 0) {
-            Write-Host "No MsBuildProperties"
-        } else {
-            Write-Host "MsBuildProperties"
-            foreach ($kv in $MsBuildProperties) {
-                Write-Host "  $($kv.Key) => $($kv.Value)"
-            }
-        }
-    }
-}
-
-
 function Find-LoadedModule {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$Module,
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [string]$ProcessName,
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [switch]$Kill
     )
 
     $tasklistExe = (Get-Command "tasklist").Source
-    $results = &"$tasklistExe" '/m' '/FO' 'CSV'
+    $results = & "$tasklistExe" '/m' '/FO' 'CSV'
     $allProcesses = $results | ConvertFrom-Csv
     $allProcessesFiltered = $allProcesses | sort -Property PID -Descending
     $allProcessesCount = $allProcesses.Count
     Write-Host "$allProcessesFilteredCount Processes to search."
-    if(-not([string]::IsNullOrEmpty($ProcessName))){
-        $allProcessesFiltered = $allProcesses.Where({$_.'Image Name' -eq "$ProcessName"})  | sort -Property PID -Descending
+    if (-not ([string]::IsNullOrEmpty($ProcessName))) {
+        $allProcessesFiltered = $allProcesses.Where({ $_. 'Image Name' -eq "$ProcessName" }) | sort -Property PID -Descending
         $allProcessesFilteredCount = $allProcessesFiltered.Count
         Write-Verbose "Filetering Process list with `"$ProcessName`". $allProcessesFilteredCount Processes to search ($allProcessesCount => $allProcessesFilteredCount)"
     }
-    [system.Collections.ArrayList]$ResultsList = [System.Collections.ArrayList]::new()
+    [System.Collections.ArrayList]$ResultsList = [System.Collections.ArrayList]::new()
     [string[]]$WhenIncluded = @()
     [string[]]$NotIncluded = @()
 
-    ForEach($ps in $allProcessesFiltered){
+    foreach ($ps in $allProcessesFiltered) {
         [int]$ProcessId = $ps.PID
-        [string]$ProcessName = $ps.'Image Name'
-        
+        [string]$ProcessName = $ps. 'Image Name'
+
         [string[]]$ModulesList = $ps.Modules.Split(',')
         $ModulesListCount = $ModulesList.Count
         $ModuleFound = $ModulesList.Contains($Module)
-        if($ModuleFound){
-            [PsCustomObject]$pobj = [PsCustomObject]@{
+        if ($ModuleFound) {
+            [pscustomobject]$pobj = [pscustomobject]@{
                 ProcessName = $ProcessName
                 ProcessId = $ProcessId
                 FoundModule = $Module
                 ModulesList = $ModulesList
             }
-            [void]$ResultsList.Add($pobj )
+            [void]$ResultsList.Add($pobj)
             Write-Verbose " ✔ Process $ProcessName (pid $ProcessId) loaded $ModulesListCount modules. Out of which $Module was included"
             $WhenIncluded = $ModulesList
-            if($($WhenIncluded.Count) -gt $($NotIncluded.Count)){
-                $Diff = $WhenIncluded | Where-Object { $_ -notin $NotIncluded } 
+            if ($($WhenIncluded.Count) -gt $($NotIncluded.Count)) {
+                $Diff = $WhenIncluded | Where-Object { $_ -notin $NotIncluded }
                 $diffStr = $diff -join ", "
                 Write-Verbose "Difference: $diffStr"
             }
         }
-        else{
+        else {
             Write-Verbose " ❌ Process $ProcessName (pid $ProcessId) loaded $ModulesListCount modules, but $Module was not included"
-            $NotIncluded = $ModulesList  
+            $NotIncluded = $ModulesList
         }
-    }   
+    }
 
 
-    if($Kill){
-        ForEach($r in $ResultsList){
+    if ($Kill) {
+        foreach ($r in $ResultsList) {
             Write-Verbose "Killing pid $($r.ProcessId)"
-            Get-Process -Id  $($r.ProcessId) | Stop-Process -Force -Confirm:$False
+            Get-Process -Id $($r.ProcessId) | Stop-Process -Force -Confirm:$False
         }
     }
 
@@ -105,27 +86,30 @@ function Find-LoadedModule {
 function Get-ProcessUsingModule {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$Module,
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [switch]$Kill
     )
 
     $tasklistExe = (Get-Command "tasklist").Source
 
-    $result = &"$tasklistExe" '/m' "$Module" '/FO' 'CSV'
-    $found = $result | Where-Object { $_.'Modules' -match [regex]::Escape($Module) }
-    if( ($result -match 'No tasks') -Or (-not $found)) {
-        Write-Host "No process found using module: $Module" -ForegroundColor Yellow
+    $result = & "$tasklistExe" '/m' "$Module" '/FO' 'CSV'
+    $found = $result | Where-Object { $_. 'Modules' -match [regex]::Escape($Module) }
+    if (($result -match 'No tasks') -or (-not $found)) {
+        Write-Host "[Get-ProcessUsingModule] " -f Blue -n
+        Write-Host "No process found using module: $Module" -ForegroundColor DarkYellow
         return @()
     }
 
     $found | ForEach-Object {
-        Write-Host "Image Name: $($_.'Image Name'), PID: $($_.PID), Modules: $($_.Modules)"
+        Write-Host "[Get-ProcessUsingModule] " -f Blue -n
+        Write-Host "Image Name: $($_.'Image Name'), PID: $($_.PID), Modules: $($_.Modules)" -f White
         if ($Kill) {
             try {
+                Write-Host "[Get-ProcessUsingModule] " -f Blue -n
                 Stop-Process -Id ([int]$_.PID) -Force -ErrorAction Stop
-                Write-Host "Killed PID $($_.PID)" -ForegroundColor Red
+                Write-Host "Killed PID $($_.PID)" -ForegroundColor White
             } catch {
                 Write-Host "Failed to kill PID $($_.PID): $_" -ForegroundColor DarkRed
             }
@@ -133,6 +117,44 @@ function Get-ProcessUsingModule {
     }
 
     return $found
+}
+
+
+function Out-BuildProperty {
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$Name,
+        [Parameter(Position = 1, Mandatory = $true)]
+        [string]$Value
+    )
+
+    process {
+        $NameStr = "{0,18}" -f $Name
+        $ValueStr = "{0,-30}" -f $Value
+        Write-Host "  $NameStr" -f DarkGray -n
+        Write-Host "  $ValueStr" -f DarkCyan
+    }
+
+}
+
+
+function Out-MsBuildProperties {
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromPipeline = $true, Mandatory = $true, HelpMessage = "MsBuildProperties")]
+        [System.Collections.Generic.List[System.Collections.Generic.KeyValuePair[string,string]]]$MsBuildProperties
+    )
+    process {
+        if (-not $MsBuildProperties -or $MsBuildProperties.Count -eq 0) {
+            Write-Host "No MsBuildProperties"
+        } else {
+            Write-Host "MsBuildProperties" -f White
+            foreach ($kv in $MsBuildProperties) {
+                Out-BuildProperty "$($kv.Key)" "$($kv.Value)"
+            }
+        }
+    }
 }
 
 
@@ -192,19 +214,19 @@ function Invoke-BuildRequest {
     $OutPath = Join-Path "$OutPath" "$($BuildRequest.Configuration)"
     $RealDeployPath = Join-Path "$($BuildRequest.DeployPath)" "$($BuildRequest.Configuration)"
 
-    Write-Host "Processing BuildRequest ID $($BuildRequest.BuildId) GUID $($BuildRequest.GUID)" -ForegroundColor Cyan
-    Write-Host "Working Directory: $($BuildRequest.WorkingDirectory)"
-    Write-Host "Project File: $($BuildRequest.ProjectFilePath)"
-    Write-Host "Architecture: $($BuildRequest.Architecture)"
-    Write-Host "Output Path: $($BuildRequest.OutputPath)" -f DarkCyan
-    Write-Host "Deploy Path: $RealDeployPath" -f DarkRed
-    Write-Host "Configuration: $($BuildRequest.Configuration)" -f DarkRed
-    Write-Host "Framework: $($BuildRequest.Framework)"
-    Write-Host "Version: $($BuildRequest.Version)"
-    Write-Host "Log Level: $($BuildRequest.LogLevel)"
-    Write-Host "Compilation Output Path: $OutPath" -f DarkCyan
+    Out-BuildProperty "Build ID" "$($BuildRequest.BuildId)"
+    Out-BuildProperty "GUID" "$($BuildRequest.GUID)"
+    Out-BuildProperty "Working Directory" "$($BuildRequest.WorkingDirectory)"
+    Out-BuildProperty "Project File" "$($BuildRequest.ProjectFilePath)"
+    Out-BuildProperty "Architecture" "$($BuildRequest.Architecture)"
+    Out-BuildProperty "Output Path" "$($BuildRequest.OutputPath)"
+    Out-BuildProperty "Deploy Path" "$RealDeployPath"
+    Out-BuildProperty "Configuration" "$($BuildRequest.Configuration)"
+    Out-BuildProperty "Framework" "$($BuildRequest.Framework)"
+    Out-BuildProperty "Version" "$($BuildRequest.Version)"
+    Out-BuildProperty "Log Level" "$($BuildRequest.LogLevel)"
     $BuildRequest.MsBuildProperties | Out-MsBuildProperties
-   
+
     # Clean output path if requested
     if ($Clean -and $OutPath -and (Test-Path $OutPath)) {
         Write-Host "Cleaning output path: $($OutPath)" -ForegroundColor Yellow
@@ -263,19 +285,19 @@ function Invoke-BuildRequest {
         "Build Failed (ExitCode: $($proc.ExitCode))" | Out-BuildTitle -Red
     }
 
-    $roboExe = (get-command "robocopy").Source      
+    $roboExe = (get-command "robocopy").Source
     if (Test-Path "$OutPath") {
         Write-Host "Files in OutputPath ($OutPath):" -ForegroundColor Blue
         Get-ChildItem -Path $OutPath -Recurse | ForEach-Object {
             $fn = "$($_.FullName)"
             Write-Host "  $relative" -ForegroundColor White -n
             Write-Host " copy to `"$RealDeployPath`"" -f DarkCyan
-            
+
             $relative = $fn.Substring($OutPath.Length).TrimStart('\', '/')
-            
+
         }
     }
-    &"$roboExe" "$OutPath" "$RealDeployPath" * /E /NFL /NDL /NJH /NJS /NC /NS /NP /R:20 /W:5
+    & "$roboExe" "$OutPath" "$RealDeployPath" * /E /NFL /NDL /NJH /NJS /NC /NS /NP /R:20 /W:5
 
 }
 

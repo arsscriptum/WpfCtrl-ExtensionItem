@@ -110,6 +110,7 @@ Write-Host "=========================================================" -f DarkGr
 Write-Host " DEPLOYING BINARIES TO MAIN SOLUTION $DestinationDeployPath`n" -f DarkYellow
 
     Remove-Item -Path "$DestinationDeployPath" -Recurse -Force -ErrorAction Ignore
+    New-Item -Path "$DestinationDeployPath" -ItemType Directory -Force -ErrorAction Ignore
     if ($Release) {
         $sourcePath = Join-Path $libsPath "Release"
     } else {
