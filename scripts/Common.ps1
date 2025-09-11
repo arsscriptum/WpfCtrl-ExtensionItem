@@ -1,50 +1,51 @@
 ﻿
 
 
-try{
-        function Get-ProjectRootPath {
-            [CmdletBinding(SupportsShouldProcess)]
-            param()
-            process {
-                $ProjectRootPath = (Resolve-Path -Path "$PSScriptRoot\..").Path
-                return $ProjectRootPath
-            }
+try {
+    function Get-ProjectRootPath {
+        [CmdletBinding(SupportsShouldProcess)]
+        param()
+        process {
+            $ProjectRootPath = (Resolve-Path -Path "$PSScriptRoot\..").Path
+            return $ProjectRootPath
         }
+    }
 
-        function Get-SourcesPath {
-            [CmdletBinding(SupportsShouldProcess)]
-            param()
-            process {
-                $SourcesPath = Join-Path (Get-ProjectRootPath) "src"
-                return $SourcesPath
-            }
+    function Get-SourcesPath {
+        [CmdletBinding(SupportsShouldProcess)]
+        param()
+        process {
+            $SourcesPath = Join-Path (Get-ProjectRootPath) "src"
+            return $SourcesPath
         }
+    }
 
 
-        function Get-BinariesPath {
-            [CmdletBinding(SupportsShouldProcess)]
-            param()
+    function Get-BinariesPath {
+        [CmdletBinding(SupportsShouldProcess)]
+        param()
 
-            $BinariesPath = Join-Path (Get-SourcesPath) "bin"
-            return $BinariesPath
+        $BinariesPath = Join-Path (Get-SourcesPath) "bin"
+        return $BinariesPath
+    }
+
+    function Get-ProjectFrameworkVersion {
+        [CmdletBinding(SupportsShouldProcess)]
+        param()
+        process {
+            $SourcesPath = "net472"
+            return $SourcesPath
         }
+    }
 
-        function Get-ProjectFrameworkVersion {
-            [CmdletBinding(SupportsShouldProcess)]
-            param()
-            process {
-                $SourcesPath = "net472"
-                return $SourcesPath
-            }
-        }
+    $DebugPath = Join-Path (Get-BinariesPath) "Debug"
 
-        $DebugPath = Join-Path (Get-BinariesPath) "Debug"
-
-        $ReleasePath = Join-Path (Get-BinariesPath) "Release"
-        $DeployedRootPath = Join-Path (Get-ProjectRootPath) "libs"
+    $ReleasePath = Join-Path (Get-BinariesPath) "Release"
+    $DeployedRootPath = Join-Path (Get-ProjectRootPath) "libs"
+    $ScriptsPath = Join-Path (Get-ProjectRootPath) "scripts"
 
 
-[pscustomobject]$Script:ProjectSettingsToSave = [pscustomobject]@{
+    [pscustomobject]$Script:ProjectSettingsToSave = [pscustomobject]@{
         ProjectRootPath = Get-ProjectRootPath
         SourcesPath = Join-Path (Get-ProjectRootPath) "src"
         ScriptsPath = Join-Path (Get-ProjectRootPath) "scripts"
@@ -56,12 +57,12 @@ try{
         BinariesDebugPath = Join-Path $DebugPath (Get-ProjectFrameworkVersion)
         BinariesReleasePath = Join-Path $ReleasePath (Get-ProjectFrameworkVersion)
         DeployedAssembliesPath = "$($DeployedRootPath)\%Target%"
-        
+
 
     }
-    }catch{
-        
-    }
+} catch {
+
+}
 
 
 function Write-ProjectPathProperties {
@@ -188,15 +189,15 @@ function Read-ProjectPathProperties {
                 $LogPart2 = "representing the path `"{0}`"" -f "$convertedValue"
                 $LogFull = "   ✔   {0,-60} {1,-80}" -f "$LogPart1", "$LogPart2"
 
-                
+
                 try {
                     New-Variable -Name "$property_name" -Value "$convertedValue" -Option AllScope -Visibility Public -Force -Scope Global -Confirm:$false -ErrorAction Ignore
-                   Write-Host "$LogFull" -f White
-                }catch{
+                    Write-Host "$LogFull" -f White
+                } catch {
 
                     Write-Host "   ⚠️ variable `"$property_name`" already registered" -f White
                 }
-                
+
             } catch {
                 Write-Warning "Failed to restore property '$property_name': $_"
             }
@@ -215,10 +216,10 @@ function Reset-RegistryProjectPathProperties {
         [Parameter(Mandatory = $false, Position = 0)]
         [string]$ProjectName = "ExtensionItemCtrl"
     )
-    try{
+    try {
 
-    Write-ProjectPathProperties -ProjectName "$ProjectName" $Script:ProjectSettingsToSave 
-    }catch{
+        Write-ProjectPathProperties -ProjectName "$ProjectName" $Script:ProjectSettingsToSave
+    } catch {
         Write-Error "$_"
     }
 
@@ -235,6 +236,6 @@ function Initialize-RegistryProjectPathProperties {
     )
 
 
-    Read-ProjectPathProperties -ProjectName "$ProjectName" 
+    Read-ProjectPathProperties -ProjectName "$ProjectName"
 
 }

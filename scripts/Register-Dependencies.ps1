@@ -19,15 +19,13 @@ param(
 
 try{
 
+ (Get-ChildItem -Path "$PSScriptRoot" -File -Filter "*.ps1") | Where { $_.Name -ne "Register-Dependencies.ps1" }  | Select -ExpandProperty Fullname | % {
+    $fn = "$_"
+    Write-Host "  ✔️ Sourcing " -f White -n 
+    Write-Host "$fn" -f DarkMagenta
+    . "$fn"
+ }
 
-. "C:\Dev\BinaryDepot-DownloadTool\externals\ExtensionItemCtrl\scripts\BuildQueue.ps1"
-. "C:\Dev\BinaryDepot-DownloadTool\externals\ExtensionItemCtrl\scripts\BuildRequest.ps1"
-. "C:\Dev\BinaryDepot-DownloadTool\externals\ExtensionItemCtrl\scripts\Common.ps1"
-. "C:\Dev\BinaryDepot-DownloadTool\externals\ExtensionItemCtrl\scripts\Get-WpfExtensionCtrl.ps1"
-. "C:\Dev\BinaryDepot-DownloadTool\externals\ExtensionItemCtrl\scripts\Include.ps1"
-. "C:\Dev\BinaryDepot-DownloadTool\externals\ExtensionItemCtrl\scripts\Read-ProjectSettings.ps1"
-. "C:\Dev\BinaryDepot-DownloadTool\externals\ExtensionItemCtrl\scripts\Register-Control.ps1"
-. "C:\Dev\BinaryDepot-DownloadTool\externals\ExtensionItemCtrl\scripts\Show-TestDialog.ps1"
 }catch{
     Show-ExceptionDetails  ($_) -ShowStack
 }

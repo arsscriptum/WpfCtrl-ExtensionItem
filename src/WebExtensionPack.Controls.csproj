@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
+    <LangVersion>9.0</LangVersion>
     <UseWPF>true</UseWPF>
     <EnableDefaultPageItems>false</EnableDefaultPageItems>
     <UseWindowsForms>true</UseWindowsForms>
@@ -16,6 +17,9 @@
     <None Remove="res\locksecurity.gif" />
     <None Remove="res\scan.gif" />
     <None Remove="res\unpack.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="9.0.9" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="res\cloud.gif" />
