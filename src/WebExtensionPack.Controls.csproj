@@ -19,6 +19,7 @@
     <None Remove="res\unpack.gif" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="System.Memory" Version="4.5.5" />
     <PackageReference Include="System.Text.Json" Version="9.0.9" />
   </ItemGroup>
   <ItemGroup>
