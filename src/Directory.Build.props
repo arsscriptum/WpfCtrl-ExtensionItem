@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup>
+    <USE_ANIMATED_GIFS>false</USE_ANIMATED_GIFS>
+  </PropertyGroup>
+</Project>

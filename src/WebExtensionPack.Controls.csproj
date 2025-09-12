@@ -5,8 +5,6 @@
     <UseWPF>true</UseWPF>
     <EnableDefaultPageItems>false</EnableDefaultPageItems>
     <UseWindowsForms>true</UseWindowsForms>
-    <!-- Set default, can be overridden from command line -->
-    <USE_ANIMATED_GIFS>false</USE_ANIMATED_GIFS>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="res\cloud.gif" />
@@ -45,6 +43,13 @@
   <ItemGroup>
     <Page Include="GridConfigPage.xaml" />
   </ItemGroup>
+  <Target Name="ShowAnimatedGifProperty" BeforeTargets="Build">
+    <Message Importance="High" Text="=============================== BUILD PROPERTIES ===============================" />
+    <Message Importance="High" Text="USE_ANIMATED_GIFS = $(USE_ANIMATED_GIFS)" />
+    <Message Importance="High" Text="USE_ANIMATED_GIFS = $(USE_ANIMATED_GIFS)" />
+    <Message Importance="High" Text="=============================== BUILD PROPERTIES ===============================" />
+  </Target>
+
 </Project>
 
 

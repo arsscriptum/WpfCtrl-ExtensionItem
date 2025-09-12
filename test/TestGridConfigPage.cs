@@ -9,8 +9,9 @@ namespace TestHarness
         [STAThread]
         public static void Main()
         {
-            var settings = new GridConfigSettings();
+            var settings = GridConfigSettings.LoadFromFile();
             var ctrl = new GridConfigPagePageControl(settings);
+            
             var window = new Window
             {
                 Title = "Test GridConfigPage",

@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Navigation;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media;
@@ -29,7 +30,7 @@ namespace WebExtensionPack.Controls
         private void BrowseLogFilePath_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new SaveFileDialog();
-            dialog.Filter = "Log files (*.log)|*.log|All files (*.*)|*.*";
+            //dialog.Filter = "Log files (*.log)|*.log|All files (*.*)|*.*";
             if (dialog.ShowDialog() == DialogResult.OK)
                 _settings.LogFilePath = dialog.FileName;
         }
@@ -82,5 +83,29 @@ namespace WebExtensionPack.Controls
         {
 
         }
+
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.DataContext is GridConfigSettings settings)
+            {
+                settings.SaveToFile(); // This saves to settings.json in your app folder
+            }
+            // Save logic here
+            var win = Window.GetWindow(this);
+            if (win != null)
+            {
+                win.Close();
+            }
+        }
+
+        private void btnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            var win = Window.GetWindow(this);
+            if (win != null)
+            {
+                win.Close();
+            }
+        }
+
     }
 }

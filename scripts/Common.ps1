@@ -43,9 +43,12 @@ try {
     $ReleasePath = Join-Path (Get-BinariesPath) "Release"
     $DeployedRootPath = Join-Path (Get-ProjectRootPath) "libs"
     $ScriptsPath = Join-Path (Get-ProjectRootPath) "scripts"
+    $Global:BinariesDebugPath = $DebugPath
+    $Global:BinariesReleasePath = $ReleasePath
+    Set-Variable -Name "BinariesDebugPath" -Value "$DebugPath" -Force -Option AllScope -Visibility Public -Scope Global -ErrorAction Ignore
+    Set-Variable -Name "BinariesReleasePath" -Value "$ReleasePath" -Force -Option AllScope -Visibility Public -Scope Global -ErrorAction Ignore
 
-
-    [pscustomobject]$Script:ProjectSettingsToSave = [pscustomobject]@{
+    [pscustomobject]$Global:ProjectSettingsToSave = [pscustomobject]@{
         ProjectRootPath = Get-ProjectRootPath
         SourcesPath = Join-Path (Get-ProjectRootPath) "src"
         ScriptsPath = Join-Path (Get-ProjectRootPath) "scripts"
@@ -54,14 +57,15 @@ try {
         FrameworkVersion = "net472"
         DeployedRootPath = "$DeployedRootPath"
 
-        BinariesDebugPath = Join-Path $DebugPath (Get-ProjectFrameworkVersion)
-        BinariesReleasePath = Join-Path $ReleasePath (Get-ProjectFrameworkVersion)
+        BinariesDebugPath = $Global:BinariesDebugPath
+        BinariesReleasePath = $Global:BinariesReleasePath
         DeployedAssembliesPath = "$($DeployedRootPath)\%Target%"
 
 
     }
+    $Global:ProjectSettingsToSave
 } catch {
-
+    Write-Error "$_"
 }
 
 

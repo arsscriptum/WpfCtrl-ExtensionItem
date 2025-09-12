@@ -25,7 +25,7 @@ function Get-ExtensionControlDllPath {
         $LibName = "{0}.dll" -f $LibBasename
 
 
-        $SearchPath = if($Configuration -eq "Release"){"$Global:BinariesReleasePath"}else{"$Global:BinariesDebugPath"}
+        $SearchPath = if($Configuration -eq "Release"){"ql"}else{"$Global:BinariesDebugPath"}
 
         Write-Host "[Get-ExtensionControlDllPath] Target $Target - Search Path $SearchPath"
        [string[]]$AllDlls = Get-ChildItem -Path "$SearchPath" -Filter "*.dll" -File -Recurse | Select -ExpandProperty Fullname | sort

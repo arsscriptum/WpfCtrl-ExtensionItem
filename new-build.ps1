@@ -14,6 +14,9 @@ param(
     [Alias("rel", "r")]
     [switch]$Release,
     [Parameter(Mandatory = $false)]
+    [Alias("c")]
+    [switch]$Clean,
+    [Parameter(Mandatory = $false)]
     [Alias("gifs")]
     [switch]$AnimatedGifs
 )
@@ -23,6 +26,24 @@ if (($Debug) -and ($Release)) {
     return -1;
 }
 
+$ProjectPath = (Resolve-Path -Path "$PSScriptRoot").Path
+$scriptsPath = Join-Path $ProjectPath "scripts"
+$libsPath = Join-Path $ProjectPath "libs"
+$BuildPath = Join-Path $ProjectPath "src"
+$BinPath = Join-Path $BuildPath "bin"
+$ObjPath = Join-Path $BuildPath "obj"
+$ArtifactsPath = Join-Path $BuildPath "artifacts"
+
+if ($Clean) {
+    Write-Host "=========================================================" -f DarkGray
+    Write-Host "  CLEANING UP BUILD FILES ...`n" -f White
+    Write-Host "  ✔️ $BinPath " -f DarkCyan
+    Write-Host "  ✔️ $ObjPath " -f DarkCyan
+    Write-Host "  ✔️ $ArtifactsPath " -f DarkCyan
+    Remove-Item -Path "$BinPath" -Recurse -Force -ErrorAction Ignore | Out-Null
+    Remove-Item -Path "$ObjPath" -Recurse -Force -ErrorAction Ignore | Out-Null
+    Remove-Item -Path "$ArtifactsPath" -Recurse -Force -ErrorAction Ignore | Out-Null
+}
 
 if ($Release) {
     $Target = "Release"
@@ -30,26 +51,9 @@ if ($Release) {
     $Target = "Debug"
 }
 
-
 Write-Host "=========================================================" -f DarkGray
 Write-Host " Setting up build..`n" -f DarkYellow
-Write-Host "  ✔️ Configuration $Target" -f DarkYellow
-
-
-$ProjectPath = (Resolve-Path -Path "$PSScriptRoot").Path
-$scriptsPath = Join-Path $ProjectPath "scripts"
-$libsPath = Join-Path $ProjectPath "libs"
-$BuildPath = Join-Path $ProjectPath "src"
-$BinPath = Join-Path $BuildPath "bin"
-$ArtifactsPath = Join-Path $BuildPath "artifacts"
-
-
-Write-Host "=========================================================" -f DarkGray
-Write-Host " Cleaning up...`n" -f DarkYellow
-Write-Host "  ✔️  Deleting binaries path $BinPath" -f DarkYellow
-Write-Host "  ✔️  Deleting artifacts path $ArtifactsPath" -f DarkYellow
-Remove-ITem -Path "$BinPath" -Force -Recurse -ErrorAction Ignore | Out-Null
-Remove-ITem -Path "$ArtifactsPath" -Force -Recurse -ErrorAction Ignore | Out-Null
+Write-Host "  ✔️ Configuration $Target`n`n" -f DarkYellow
 
 $IncludeScript = Join-Path $scriptsPath "Include.ps1"
 $BuildQueueScript = Join-Path $scriptsPath "BuildQueue.ps1"
@@ -65,11 +69,7 @@ Write-Host "  ✔️  Including Script $BuildQueueScript" -f DarkCyan
 Write-Host "  ✔️  Including Script $BuildRequestScript" -f DarkCyan
 . "$BuildRequestScript"
 
-
-
 Initialize-RegistryProjectPathProperties "ExtensionItemCtrl"
-
-
 
 Write-Host "=========================================================" -f DarkGray
 Write-Host " Dependencies...`n" -f DarkGray
@@ -99,18 +99,15 @@ while (BuildsRemaining) {
     StartBuild $BuildRequest
 }
 
-
-
-
 [System.Management.Automation.PathInfo]$pi = Resolve-Path -Path "libs\WebExtensionPack" -RelativeBasePath "..\.." -ErrorAction Ignore
 if (($pi) -and ($pi.Path)) {
     $DestinationDeployPath = $pi.Path
 
-Write-Host "=========================================================" -f DarkGray
-Write-Host " DEPLOYING BINARIES TO MAIN SOLUTION $DestinationDeployPath`n" -f DarkYellow
+    Write-Host "=========================================================" -f DarkGray
+    Write-Host " DEPLOYING BINARIES TO MAIN SOLUTION $DestinationDeployPath`n" -f DarkYellow
 
-    Remove-Item -Path "$DestinationDeployPath" -Recurse -Force -ErrorAction Ignore
-    New-Item -Path "$DestinationDeployPath" -ItemType Directory -Force -ErrorAction Ignore
+    Remove-Item -Path "$DestinationDeployPath" -Recurse -Force -ErrorAction Ignore | Out-Null
+    New-Item -Path "$DestinationDeployPath" -ItemType Directory -Force -ErrorAction Ignore | Out-Null
     if ($Release) {
         $sourcePath = Join-Path $libsPath "Release"
     } else {
@@ -118,10 +115,10 @@ Write-Host " DEPLOYING BINARIES TO MAIN SOLUTION $DestinationDeployPath`n" -f Da
     }
 
     Get-ChildItem -Path $sourcePath -File | % {
-        $fn = $_.Fullname
-        $bn = $_.Basename
+        $fn = $_.FullName
+        $bn = $_.BaseName
         $srcFile = "$bn"
-        Write-Host "  ✔️ $srcFile => " -f White -n 
+        Write-Host "  ✔️ $srcFile => " -f White -n
         Write-Host "$DestinationDeployPath" -f DarkMagenta
         Copy-Item "$fn" "$DestinationDeployPath" -Force
     }
