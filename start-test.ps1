@@ -18,7 +18,7 @@ $libsPath = Join-Path $ProjectPath "libs"
 $BuildPath = Join-Path $ProjectPath "src"
 $BinPath = Join-Path $BuildPath "bin"
 $ArtifactsPath = Join-Path $BuildPath "artifacts"
-$Target = "Release"
+$Target = "Debug"
 
 $CommonScript = Join-Path $scriptsPath "Common.ps1"
 $IncludeScript = Join-Path $scriptsPath "Include.ps1"
@@ -58,7 +58,7 @@ Write-Host "  The WpfControl was loaded through the Dll ❗❗❗" -f White
 Write-Host "  Remember that the file will remain locked and copy-protected"
 Write-Host "  until the powershell process (pid $pid) is killed ❗❗❗" -f White
 try{
-  Register-ExtensionControlDll Release
+  Register-ExtensionControlDll $Target
   Get-ProcessUsingModule "WebExtensionPack.Controls.dll"
 }catch{
   Write-Error "$_"
