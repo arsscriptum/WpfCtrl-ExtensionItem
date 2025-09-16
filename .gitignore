@@ -29,5 +29,17 @@ obj/**
 test/bin**
 test/bin 
 
+libs
+libs/**
+.vs
+.vs/**
+src/bin
+src/bin/**
+src/obj
+src/obj/**
+src/.vs
+src/.vs/**
+
+
 test/obj/**
 test/obj
