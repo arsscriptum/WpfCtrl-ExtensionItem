@@ -69,7 +69,7 @@ Write-Host "  ✔️  Including Script $BuildQueueScript" -f DarkCyan
 Write-Host "  ✔️  Including Script $BuildRequestScript" -f DarkCyan
 . "$BuildRequestScript"
 
-Initialize-RegistryProjectPathProperties "ExtensionItemCtrl"
+Initialize-ProjectRegistrySettings "ExtensionItemCtrl"
 
 Write-Host "=========================================================" -f DarkGray
 Write-Host " Dependencies...`n" -f DarkGray
