@@ -54,7 +54,40 @@ namespace WebExtensionPack.Controls
             var json = System.Text.Json.JsonSerializer.Serialize(this, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(filePath, json);
         }
-
+        public void ResetSettings()
+        {
+            LogLevel = "Info";
+            LogFilePath = null;
+            LogChannelGui = false;
+            LogChannelFile = false;
+            LogChannelEvents = false;
+            RecordNetworkStatistics = false;
+            TemporaryDirectory = null;
+            FinalDestinationDirectory = null;
+            AutorunPackageCommand = false;
+            VersionCheckOnStart = false;
+            AutoUpdateEnabled = false;
+            MessageOfTheDayEnabled = false;
+            CompareNewFiles = false;
+            TransferMode = "BITS TRANSFER";
+            MaxParallelJobs = 0;
+            Priority = 0;
+            RetryInterval = 0;
+            RetryTimeout = 0;
+            MaxDownloadTime = 0;
+            ProxyAuthentication = false;
+            ProxyBypass = null;
+            ProxyCredential = null;
+            ProxyUsage = false;
+            ProxyList = null;
+            NotifyFlags = "None";
+            NotifyCmdLine = null;
+            GenerateErrorReportOnError = false;
+            GatherSystemInformation = false;
+            LicenseUsername = null;
+            LicenseCompanyName = null;
+            LicenseKey = null;
+        }
 
         // In GridConfigSettings.cs
 

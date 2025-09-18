@@ -14,12 +14,12 @@
                 <StackPanel Margin="10,10,10,0">
                     <TextBlock Text="Temporary Directory:" Margin="0,0,0,2"/>
                     <DockPanel Margin="0,8,0,8">
-                        <TextBox Text="{Binding TemporaryDirectory, Mode=TwoWay}" Width="250" Height="25"/>
+                        <TextBox Name="textboxCtrlTmpDirectory" Text="{Binding TemporaryDirectory, Mode=TwoWay}" Width="250" Height="20" />
                         <Button Content="..." Width="30" Height="20" Margin="4,0,0,0" Click="BrowseTemporaryDirectory_Click"/>
                     </DockPanel>
-                    <TextBlock Text="Final Destination Directory:" Margin="0,0,0,2"/>
+                    <TextBlock Name="textboxCtrlFinalDirectory" Text="Final Destination Directory:" Margin="0,0,0,2"/>
                     <DockPanel Margin="0,8,0,8">
-                        <TextBox Text="{Binding FinalDestinationDirectory, Mode=TwoWay}" Width="250" Height="25"/>
+                        <TextBox Text="{Binding FinalDestinationDirectory, Mode=TwoWay}" Width="250" Height="20" />
                         <Button Content="..." Width="30" Height="20" Margin="4,0,0,0" Click="BrowseFinalDestinationDirectory_Click"/>
                     </DockPanel>
                     <CheckBox Content="Autorun Package Command" IsChecked="{Binding AutorunPackageCommand, Mode=TwoWay}" Margin="0,8,0,2"/>
@@ -37,7 +37,7 @@
                         SelectedValue="{Binding LogLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         SelectedValuePath="Content"
                         Margin="4,8,0,0"
-                        Height="25"
+                        Height="20"
                         Width="150">
                         <ComboBoxItem Content="Info"/>
                         <ComboBoxItem Content="Debug"/>
@@ -46,7 +46,7 @@
                     </ComboBox>
                     <TextBlock Text="Log File Path:" Margin="0,0,0,2"/>
                     <DockPanel Margin="0,0,0,8">
-                        <TextBox Text="{Binding LogFilePath, Mode=TwoWay}" Width="250" Height="25" Margin="4,8,0,0"/>
+                        <TextBox Text="{Binding LogFilePath, Mode=TwoWay}" Width="250" Height="20" Margin="4,8,0,0"/>
                         <Button Content="..." Width="30" Height="20" Margin="4,8,0,0" Click="BrowseLogFilePath_Click"/>
                     </DockPanel>
                     <TextBlock Text="Log Channels:" Margin="0,0,0,2"/>
@@ -139,8 +139,8 @@
 
         <!-- Shared Save and Cancel buttons at bottom -->
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,10,10">
-            <Button x:Name="btnSave" Content="Save" Width="80" Margin="0,0,12,0" Click="btnSave_Click" Height="30"/>
-            <Button x:Name="btnCancel" Content="Cancel" Width="80" Click="btnCancel_Click" Height="30"/>
+            <Button x:Name="btnSave" Content="Save" Width="80" Margin="0,0,12,0" Click="btnSave_Click" Height="25"/>
+            <Button x:Name="btnCancel" Content="Cancel" Width="80" Click="btnCancel_Click" Height="25"/>
         </StackPanel>
     </DockPanel>
 </UserControl>

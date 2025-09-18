@@ -59,25 +59,47 @@ namespace WebExtensionPack.Controls
             InitializeComponent();
             _settings = settings;
             this.DataContext = _settings;
+
+            // Set TemporaryDirectory = FinalDestinationDirectory if not set
+            if (string.IsNullOrWhiteSpace(_settings.TemporaryDirectory) && !string.IsNullOrWhiteSpace(_settings.FinalDestinationDirectory))
+            {
+                _settings.TemporaryDirectory = _settings.FinalDestinationDirectory;
+            }
         }
 
 
         private void btnRestoreDefaultSettings_Click(object sender, RoutedEventArgs e)
         {
-            // _settings.ResetSettings();
+            _settings.ResetSettings();
         }
+
 
         private void UserControl_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
-            // Find all TextBoxes in this control force the Text bindings to fire to make sure all changes have been saved.
-            // This is required because if the user changes some text, then clicks on the Options Window's OK button, it closes
-            // the window before the TextBox's Text bindings fire, so the new value will not be saved.
-            /* foreach (var textBox in DiffAllFilesHelper.FindVisualChildren<TextBox>(sender as UserControl))
-             {
-                 var bindingExpression = textBox.GetBindingExpression(TextBox.TextProperty);
-                 if (bindingExpression != null) bindingExpression.UpdateSource();
-             }*/
+            // For every TextBox in this control, update the source of its Text binding
+            foreach (var textBox in FindVisualChildren<System.Windows.Controls.TextBox>(this))
+            {
+                var bindingExpression = textBox.GetBindingExpression(System.Windows.Controls.TextBox.TextProperty);
+                if (bindingExpression != null)
+                    bindingExpression.UpdateSource();
+            }
         }
+
+        // Utility function to find all children of a certain type
+        public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
+        {
+            if (depObj == null)
+                yield break;
+            for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(depObj); i++)
+            {
+                DependencyObject child = System.Windows.Media.VisualTreeHelper.GetChild(depObj, i);
+                if (child != null && child is T)
+                    yield return (T)child;
+                foreach (T childOfChild in FindVisualChildren<T>(child))
+                    yield return childOfChild;
+            }
+        }
+
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -107,5 +129,9 @@ namespace WebExtensionPack.Controls
             }
         }
 
+        private void textboxCtrlTmpDirectory_TargetUpdated(object sender, DataTransferEventArgs e)
+        {
+
+        }
     }
 }
